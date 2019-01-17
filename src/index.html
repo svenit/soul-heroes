@@ -2,76 +2,81 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Solo Dungeon">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-title" content="Solo Dungeon">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <link rel="manifest" href="manifest.json">
-  <link rel="preload" as="font" href="fonts/normal.ttf" crossOrigin="anonymous" type="font/ttf" />
-  <link rel="preload" as="font" href="fonts/pixel.ttf" crossOrigin="anonymous" type="font/ttf" />
-  <link rel="preload" as="font" href="fonts/pixel-vi.otf" crossOrigin="anonymous" type="font/otf" />
-  <link rel="preload" as="font" href="fonts/pixel-san.otf" crossOrigin="anonymous" type="font/otf" />
-  <link rel="preload" as="font" href="fonts/biker.ttf" crossOrigin="anonymous" type="font/ttf" />
-  <title>
-    <%= htmlWebpackPlugin.options.gameName %>
-  </title>
+	<link rel="manifest" href="manifest.json">
+	<link rel="preload" as="font" href="fonts/normal.ttf" crossOrigin="anonymous" type="font/ttf" />
+	<link rel="preload" as="font" href="fonts/pixel.ttf" crossOrigin="anonymous" type="font/ttf" />
+	<link rel="preload" as="font" href="fonts/pixel-vi.otf" crossOrigin="anonymous" type="font/otf" />
+	<link rel="preload" as="font" href="fonts/pixel-san.otf" crossOrigin="anonymous" type="font/otf" />
+	<link rel="preload" as="font" href="fonts/biker.ttf" crossOrigin="anonymous" type="font/ttf" />
+	<title>
+		<%= htmlWebpackPlugin.options.gameName %>
+	</title>
+	<style>
+		@font-face {
+			font-family: Normal;
+			src: url('fonts/normal.ttf');
+		}
 
-  <style>
-    @font-face {
-      font-family: Normal;
-      src: url('fonts/normal.ttf');
-    }
+		@font-face {
+			font-family: Pixel;
+			src: url('fonts/pixel.ttf');
+		}
 
-    @font-face {
-      font-family: Pixel;
-      src: url('fonts/pixel.ttf');
-    }
+		@font-face {
+			font-family: PixelVi;
+			src: url('fonts/pixel-vi.otf');
+		}
 
-    @font-face {
-      font-family: PixelVi;
-      src: url('fonts/pixel-vi.otf');
-    }
+		@font-face {
+			font-family: PixelSan;
+			src: url('fonts/pixel-san.otf');
+		}
 
-    @font-face {
-      font-family: PixelSan;
-      src: url('fonts/pixel-san.otf');
-    }
+		@font-face {
+			font-family: Biker;
+			src: url('fonts/biker.ttf');
+		}
 
-    @font-face {
-      font-family: Biker;
-      src: url('fonts/biker.ttf');
-    }
+		html {
+			height: 100vh;
+		}
 
-    body {
-      margin: 0px;
-      overflow: hidden;
-      user-select: none;
-    }
+		body {
+			margin: 0px;
+			overflow: hidden;
+			user-select: none;
+			height: 100vh;
+		}
 
-    canvas {
-      margin: 0px;
-      width: 100%;
-      height: 100%;
-    }
-  </style>
+		#game {
+			height: 100vh;
+		}
 
-  <noscript>Please enable javascript to continue using this application.</noscript>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-      })
-    }
-  </script>
+		canvas {
+			margin: 0px;
+			width: 100%;
+			height: 100vh;
+		}
+	</style>
+	<noscript>Please enable javascript to continue using this application.</noscript>
+	<script>
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', () => {
+				navigator.serviceWorker.register('./sw.js')
+			})
+		}
+	</script>
 </head>
-
 <body>
-  <div id="game"></div>
+	<div id="game"></div>
 </body>
-
 </html>

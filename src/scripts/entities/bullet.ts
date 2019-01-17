@@ -30,7 +30,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
     /* Private */
     private _timer: Phaser.Time.TimerEvent;
 
-    constructor(scene: Scene, x: number, y: number, texture: string | string[], options: Partial<BulletOptions> = {}) {
+    constructor(scene: Scene, x: number, y: number, texture: string | string[] | null, options: Partial<BulletOptions> = {}) {
         // @ts-ignore
         super(scene, x, y);
         scene.add.existing(this);
@@ -48,8 +48,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
         actor: Actor,
         weapon: Phaser.GameObjects.Sprite,
         targets: Phaser.GameObjects.GameObject[] = [],
-        callbackOnAttacked?: CallableFunction,
-        callbackOnColliderGround?: CallableFunction,
+        callbackOnAttacked?: CallableFunction | null,
+        callbackOnColliderGround?: CallableFunction | null,
     ) {
         let { attackRange, width, height, speed, scale, rotation, damage, center, scaleIncre, damageIcre, criticalChane, criticalX, deflection } = this.options;
         let criticalAttack = false;

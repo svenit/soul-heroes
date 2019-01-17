@@ -22,10 +22,10 @@ export default {
     scale: {
         width: window.innerWidth,
         height: window.innerHeight,
+        mode: Phaser.Scale.CENTER_BOTH,
     },
     disableContextMenu: true,
     fps: {
-        target: 60,
         forceSetTimeOut: true,
     },
     banner: false,

@@ -1,7 +1,7 @@
 import GameHelper from '../../helpers/game';
 import { Actor } from '../../types/actor';
 import { BaseBullet, BulletOptions } from '../../types/bullet';
-import { CollierType, Scene, Stats } from '../../types/global';
+import { CollierType, Scene } from '../../types/global';
 import { MonsterStats } from '../../types/monster';
 import Bullet from '../bullet';
 import BaseMonster from '../monster';
@@ -12,8 +12,8 @@ class Boomer extends BaseMonster {
         damage: [10, 50],
         speed: 2.3,
         scale: 1.5,
-        height: 15,
-        width: 15,
+        height: 20,
+        width: 20,
         center: true,
         attackRange: 900,
         rotation: 0.1,

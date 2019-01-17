@@ -1,16 +1,16 @@
 {
 	"textures": [
 		{
-			"image": "base.png",
+			"image": "images/monster/chaos-knight/base.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 147,
-				"h": 59
+				"w": 94,
+				"h": 97
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "4 #19240.png",
+					"filename": "move_4.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -31,49 +31,7 @@
 					}
 				},
 				{
-					"filename": "5 #19234.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 34,
-						"h": 20
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 34,
-						"h": 20
-					},
-					"frame": {
-						"x": 1,
-						"y": 38,
-						"w": 34,
-						"h": 20
-					}
-				},
-				{
-					"filename": "4 #19235.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 24,
-						"h": 20
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 1,
-						"w": 24,
-						"h": 19
-					},
-					"frame": {
-						"x": 37,
-						"y": 38,
-						"w": 24,
-						"h": 19
-					}
-				},
-				{
-					"filename": "5 #19245.png",
+					"filename": "move_5.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -94,49 +52,28 @@
 					}
 				},
 				{
-					"filename": "3 #19238.png",
+					"filename": "attack_1.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
 						"w": 24,
-						"h": 24
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 9,
-						"w": 24,
-						"h": 15
-					},
-					"frame": {
-						"x": 63,
-						"y": 32,
-						"w": 24,
-						"h": 15
-					}
-				},
-				{
-					"filename": "6 #19236.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 20,
 						"h": 24
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 20,
-						"h": 8
+						"w": 15,
+						"h": 24
 					},
 					"frame": {
-						"x": 63,
-						"y": 49,
-						"w": 20,
-						"h": 8
+						"x": 78,
+						"y": 1,
+						"w": 15,
+						"h": 24
 					}
 				},
 				{
-					"filename": "3 #19243.png",
+					"filename": "move_3.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -150,14 +87,14 @@
 						"h": 28
 					},
 					"frame": {
-						"x": 78,
-						"y": 1,
+						"x": 1,
+						"y": 38,
 						"w": 35,
 						"h": 28
 					}
 				},
 				{
-					"filename": "2 #19244.png",
+					"filename": "move_2.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -171,14 +108,14 @@
 						"h": 27
 					},
 					"frame": {
-						"x": 89,
-						"y": 31,
+						"x": 38,
+						"y": 32,
 						"w": 31,
 						"h": 27
 					}
 				},
 				{
-					"filename": "6 #19239.png",
+					"filename": "move_6.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -192,14 +129,35 @@
 						"h": 27
 					},
 					"frame": {
-						"x": 115,
-						"y": 1,
+						"x": 1,
+						"y": 68,
 						"w": 31,
 						"h": 27
 					}
 				},
 				{
-					"filename": "1 #19237.png",
+					"filename": "attack_3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 34
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 34
+					},
+					"frame": {
+						"x": 71,
+						"y": 32,
+						"w": 20,
+						"h": 34
+					}
+				},
+				{
+					"filename": "move_1.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -213,10 +171,52 @@
 						"h": 28
 					},
 					"frame": {
-						"x": 122,
-						"y": 30,
+						"x": 34,
+						"y": 68,
 						"w": 24,
 						"h": 28
+					}
+				},
+				{
+					"filename": "attack_2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 20,
+						"h": 24
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 19,
+						"h": 24
+					},
+					"frame": {
+						"x": 60,
+						"y": 68,
+						"w": 19,
+						"h": 24
+					}
+				},
+				{
+					"filename": "attack_4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 24,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 0,
+						"w": 8,
+						"h": 20
+					},
+					"frame": {
+						"x": 81,
+						"y": 68,
+						"w": 8,
+						"h": 20
 					}
 				}
 			]
@@ -225,6 +225,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:94127d36c74fa8d3a401f6e529f44d7a:9a0827d0f2c5d9b33452eaca63b369ae:7232e5c4564c48ce7821741e80f218b0$"
+		"smartupdate": "$TexturePacker:SmartUpdate:0df603a65b9e635b29939cc0fc0a5036:9642a15deed363230c446016912306a0:24a6ee5b74ee61b4e8d7d99a36e848b3$"
 	}
 }

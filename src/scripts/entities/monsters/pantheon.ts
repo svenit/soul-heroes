@@ -12,8 +12,8 @@ class Pantheon extends BaseMonster {
         damage: [50, 100],
         speed: 2.3,
         scale: 1.5,
-        height: 5,
-        width: 20,
+        height: 8,
+        width: 8,
         center: true,
         attackRange: 900,
     };

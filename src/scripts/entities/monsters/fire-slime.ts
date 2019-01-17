@@ -3,6 +3,7 @@ import { BulletOptions } from '../../types/bullet';
 import { Scene } from '../../types/global';
 import { MonsterStats } from '../../types/monster';
 import BaseMonster from '../monster';
+
 class FireSlime extends BaseMonster {
     /* Private */
     private _bulletOptions: Pick<BulletOptions, 'damage'> = {

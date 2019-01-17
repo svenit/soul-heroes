@@ -16,10 +16,10 @@ class SkyShurikenWeapon extends Weapon {
 
     /* Private */
     private _bulletOptions: Partial<BulletOptions> = {
-        speed: 7,
+        speed: 7 ,
         attackRange: 600,
         width: 15,
-        height: 15,
+        height: 10,
         scale: 1.2,
         damage: [80, 300],
         center: true,

@@ -1,7 +1,7 @@
 const GameConfig = {
     debug: false,
-    showFps: true,
-    fullScreenMode: true,
+    showFps: false,
+    fullScreenMode: false,
     showAimLine: false,
     showAutoAimRange: false,
     showMonterVisionRange: false,
