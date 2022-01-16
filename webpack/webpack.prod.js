@@ -6,6 +6,7 @@ const WebpackObfuscator = require('webpack-obfuscator');
 const { version } = require('../package.json');
 
 const builtAt = new Date().getTime();
+const maxBuiltFileSize = 20 * 1024 * 1024;
 
 const prod = {
     mode: 'production',
@@ -47,8 +48,13 @@ const prod = {
         new InjectManifest({
             swSrc: path.resolve(__dirname, '../pwa/sw.js'),
             swDest: 'sw.js',
+            maximumFileSizeToCacheInBytes: maxBuiltFileSize,
         }),
     ],
+    performance: {
+        maxEntrypointSize: maxBuiltFileSize,
+        maxAssetSize: maxBuiltFileSize,
+    },
 };
 
 module.exports = merge(common, prod);

@@ -8,7 +8,7 @@
     "build": "rimraf dist && webpack --config webpack/webpack.prod.js",
     "bundle": "npm run build",
     "serve-window": "SET PORT=8120 && serve dist",
-    "serve": "PORT=8120 && serve dist"
+    "serve": "serve dist -p 8120"
   },
   "engines": {
     "node": ">=12"
