@@ -31,7 +31,7 @@ const prod = {
                 controlFlowFlattening: true,
                 deadCodeInjection: true,
                 debugProtection: true,
-                debugProtectionInterval: true,
+                debugProtectionInterval: false,
                 disableConsoleOutput: true,
                 sourceMap: false,
                 numbersToExpressions: true,
