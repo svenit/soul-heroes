@@ -11,7 +11,7 @@ class IceBear extends BaseMonster {
     /* Private */
     private _bulletOptions: Partial<BulletOptions> = {
         damage: [60, 70],
-        speed: 3,
+        speed: 2.3,
         scale: 2,
         height: 15,
         width: 15,
@@ -25,7 +25,7 @@ class IceBear extends BaseMonster {
     private _stats: Partial<MonsterStats> = {
         hp: 1000,
         mp: 0,
-        speed: 0.8,
+        speed: 0.5,
         vision: 600,
         scale: 2,
         agility: 150,

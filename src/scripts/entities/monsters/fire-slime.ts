@@ -11,7 +11,7 @@ class FireSlime extends BaseMonster {
     private _stats: Partial<MonsterStats> = {
         hp: 1000,
         mp: 0,
-        speed: 0.8,
+        speed: 0.5,
         vision: 300,
         scale: 1.5,
         movementRound: 2,

@@ -10,7 +10,7 @@ class Boomer extends BaseMonster {
     /* Private */
     private _bulletOptions: Partial<BulletOptions> = {
         damage: [10, 50],
-        speed: 3,
+        speed: 2.3,
         scale: 1.5,
         height: 15,
         width: 15,

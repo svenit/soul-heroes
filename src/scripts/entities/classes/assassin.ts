@@ -17,8 +17,8 @@ class Assassin extends Player {
         super(scene, x, y);
         this.initGear(this._gearsOptions);
         this.initStats({
-            hp: 650,
-            speed: 3,
+            hp: 65000,
+            speed: 2.5,
             attackRange: 300,
             accuracy: 100,
             weaponMastery: 0,

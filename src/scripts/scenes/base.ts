@@ -27,7 +27,7 @@ class BaseScene extends Phaser.Scene {
         });
     }
     public create() {
-        if (GameConfig.debug) this._fpsText = new FpsText(this);
+        if (GameConfig.showFps) this._fpsText = new FpsText(this);
     }
     public update(time: number, delta: number): void {
         this._fpsText && this._fpsText.update();

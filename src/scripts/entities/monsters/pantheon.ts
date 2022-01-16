@@ -10,7 +10,7 @@ class Pantheon extends BaseMonster {
     /* Private */
     private _bulletOptions: Partial<BulletOptions> = {
         damage: [50, 100],
-        speed: 3,
+        speed: 2.3,
         scale: 1.5,
         height: 5,
         width: 20,
@@ -20,7 +20,7 @@ class Pantheon extends BaseMonster {
     private _stats: Partial<MonsterStats> = {
         hp: 1000,
         mp: 0,
-        speed: 0.8,
+        speed: 0.5,
         vision: 300,
         scale: 1.5,
         attackRange: 300,

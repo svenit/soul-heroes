@@ -21,7 +21,7 @@ class SkyShurikenWeapon extends Weapon {
         width: 15,
         height: 15,
         scale: 1.2,
-        damage: [80, 80],
+        damage: [80, 300],
         center: true,
         criticalChane: 30,
         deflection: 5,
