@@ -25,7 +25,7 @@ export default {
     },
     disableContextMenu: true,
     fps: {
-        target: 240,
+        target: 60,
         forceSetTimeOut: true,
     },
     banner: false,
