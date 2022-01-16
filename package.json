@@ -7,7 +7,8 @@
     "start": "webpack serve --config webpack/webpack.dev.js --port 3000",
     "build": "rimraf dist && webpack --config webpack/webpack.prod.js",
     "bundle": "npm run build",
-    "serve": "SET PORT=8120 && serve dist"
+    "serve-window": "SET PORT=8120 && serve dist",
+    "serve": "PORT=8120 && serve dist"
   },
   "engines": {
     "node": ">=12"
