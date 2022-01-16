@@ -1,0 +1,167 @@
+{
+	"textures": [
+		{
+			"image": "images/monster/pantheon/base.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 149,
+				"h": 60
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "bullet.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 40,
+						"h": 15
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 15
+					},
+					"frame": {
+						"x": 1,
+						"y": 43,
+						"w": 40,
+						"h": 15
+					}
+				},
+				{
+					"filename": "move_3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 34,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 29
+					},
+					"frame": {
+						"x": 29,
+						"y": 1,
+						"w": 33,
+						"h": 29
+					}
+				},
+				{
+					"filename": "attack_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 33,
+						"h": 28
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 27
+					},
+					"frame": {
+						"x": 43,
+						"y": 32,
+						"w": 33,
+						"h": 27
+					}
+				},
+				{
+					"filename": "attack_3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 39,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 37,
+						"h": 28
+					},
+					"frame": {
+						"x": 64,
+						"y": 1,
+						"w": 37,
+						"h": 28
+					}
+				},
+				{
+					"filename": "attack_2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 35,
+						"h": 29
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 35,
+						"h": 28
+					},
+					"frame": {
+						"x": 78,
+						"y": 31,
+						"w": 35,
+						"h": 28
+					}
+				},
+				{
+					"filename": "move_2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 35,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 28
+					},
+					"frame": {
+						"x": 103,
+						"y": 1,
+						"w": 33,
+						"h": 28
+					}
+				},
+				{
+					"filename": "move_1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 33,
+						"h": 26
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 26
+					},
+					"frame": {
+						"x": 115,
+						"y": 31,
+						"w": 33,
+						"h": 26
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:ecdc284ab214f1b2d77d5ef6ef0d7955:41a865274ddc81690f12ecdef9d37999:7232e5c4564c48ce7821741e80f218b0$"
+	}
+}

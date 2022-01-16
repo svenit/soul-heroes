@@ -1,0 +1,79 @@
+import GameHelper from '../../helpers/game';
+import { Actor } from '../../types/actor';
+import { BulletOptions } from '../../types/bullet';
+import { Scene } from '../../types/global';
+import Bullet from '../bullet';
+import BaseMonster from '../monster';
+
+class Pantheon extends BaseMonster {
+    bulletOptions: Partial<BulletOptions> = {
+        damage: [50, 100],
+        speed: 3,
+        scale: 1.5,
+        height: 5,
+        width: 20,
+        center: true,
+        attackRange: 900,
+    };
+
+    /* Private */
+    _coolDownRemaining = 0;
+    _coolDown = 2000;
+    constructor(scene: Scene, x: number, y: number) {
+        super(scene, x, y);
+        this.setDepth(3);
+        this.setBodySize(22, 22, true);
+        this.setStats({
+            hp: 1000,
+            mp: 0,
+            speed: 0.8,
+            vision: 300,
+            scale: 1.5,
+            attackRange: 300,
+            movementRound: 2,
+            maxMovementRound: 2,
+        });
+        this.setScale(this.stats.scale);
+    }
+    async makeMonster() {
+        super.makeMonster();
+        await this.makeAnimations();
+        this.autoMoveToHaterAndAttack(() => {
+            this.play('pantheon-move');
+        });
+        this.play('pantheon-move');
+    }
+    attack(_hater: Actor, angle: number) {
+        if (this._coolDownRemaining == 0) {
+            this.play('pantheon-attack');
+            const bullet = new Bullet(this.scene, this.x, this.y, ['pantheon', 'bullet.png'], this.bulletOptions);
+            const bulletObjectOptions = {
+                angle,
+                x: this.x,
+                y: this.y,
+            } as Phaser.GameObjects.Sprite;
+            bullet.fire(this, bulletObjectOptions, this.haters);
+            this._coolDownRemaining = this._coolDown;
+            setTimeout(() => {
+                this._coolDownRemaining = 0;
+            }, this._coolDown);
+        }
+    }
+    async makeAnimations() {
+        await GameHelper.loadSprite('multiatlas', 'pantheon', 'images/monster/pantheon/base.json', this.scene);
+        this.scene.anims.create({
+            key: 'pantheon-move',
+            frames: GameHelper.convertAnimations(this.scene, 'pantheon', 'move'),
+            frameRate: 8,
+            repeat: Phaser.FOREVER,
+        });
+        this.scene.anims.create({
+            key: 'pantheon-attack',
+            frames: GameHelper.convertAnimations(this.scene, 'pantheon', 'attack'),
+            frameRate: 10,
+            repeat: 5,
+        });
+    }
+}
+
+export default Pantheon;

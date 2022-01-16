@@ -1,0 +1,195 @@
+{
+	"textures": [
+		{
+			"image": "images/weapons/archer/wooden-bow.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 62,
+				"h": 43
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 33,
+						"h": 25
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 31,
+						"h": 25
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 31,
+						"h": 25
+					},
+					"anchor": {
+						"x": 0.696969696969697,
+						"y": 0.68
+					}
+				},
+				{
+					"filename": "FaZhang.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 14,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 14,
+						"h": 14
+					},
+					"frame": {
+						"x": 1,
+						"y": 28,
+						"w": 14,
+						"h": 14
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "arrow.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 11
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 11
+					},
+					"frame": {
+						"x": 17,
+						"y": 28,
+						"w": 20,
+						"h": 11
+					},
+					"anchor": {
+						"x": 0.2,
+						"y": 0.45454545
+					}
+				},
+				{
+					"filename": "1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 33,
+						"h": 25
+					},
+					"spriteSourceSize": {
+						"x": 22,
+						"y": 8,
+						"w": 10,
+						"h": 17
+					},
+					"frame": {
+						"x": 34,
+						"y": 1,
+						"w": 10,
+						"h": 17
+					},
+					"anchor": {
+						"x": 0.696969696969697,
+						"y": 0.68
+					}
+				},
+				{
+					"filename": "3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 33,
+						"h": 25
+					},
+					"spriteSourceSize": {
+						"x": 23,
+						"y": 8,
+						"w": 10,
+						"h": 17
+					},
+					"frame": {
+						"x": 46,
+						"y": 1,
+						"w": 10,
+						"h": 17
+					},
+					"anchor": {
+						"x": 0.72727273,
+						"y": 0.68
+					}
+				},
+				{
+					"filename": "3 #29255.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 33,
+						"h": 25
+					},
+					"spriteSourceSize": {
+						"x": 22,
+						"y": 8,
+						"w": 10,
+						"h": 17
+					},
+					"frame": {
+						"x": 39,
+						"y": 20,
+						"w": 10,
+						"h": 17
+					},
+					"anchor": {
+						"x": 0.696969696969697,
+						"y": 0.68
+					}
+				},
+				{
+					"filename": "4 #29262.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 33,
+						"h": 25
+					},
+					"spriteSourceSize": {
+						"x": 22,
+						"y": 8,
+						"w": 10,
+						"h": 17
+					},
+					"frame": {
+						"x": 51,
+						"y": 20,
+						"w": 10,
+						"h": 17
+					},
+					"anchor": {
+						"x": 0.696969696969697,
+						"y": 0.68
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:5d5399c71dd31159ffa793632c415d3e:872ff7598cee9e3ef89467a145970692:8ac2c9ef6646a209830ba49619146dc4$"
+	}
+}

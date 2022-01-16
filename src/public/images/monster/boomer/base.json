@@ -1,0 +1,251 @@
+{
+	"textures": [
+		{
+			"image": "images/monster/boomer/base.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 239,
+				"h": 125
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "bang_4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 89,
+						"h": 88
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 89,
+						"h": 88
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 89,
+						"h": 88
+					}
+				},
+				{
+					"filename": "attack_3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 23,
+						"h": 34
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 22,
+						"h": 33
+					},
+					"frame": {
+						"x": 1,
+						"y": 91,
+						"w": 22,
+						"h": 33
+					}
+				},
+				{
+					"filename": "move_2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 33,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 1,
+						"w": 32,
+						"h": 31
+					},
+					"frame": {
+						"x": 25,
+						"y": 91,
+						"w": 32,
+						"h": 31
+					}
+				},
+				{
+					"filename": "move_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 27,
+						"h": 45
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 14,
+						"w": 27,
+						"h": 31
+					},
+					"frame": {
+						"x": 59,
+						"y": 91,
+						"w": 27,
+						"h": 31
+					}
+				},
+				{
+					"filename": "bullet.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 88,
+						"y": 91,
+						"w": 20,
+						"h": 20
+					}
+				},
+				{
+					"filename": "bang_3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 89,
+						"h": 87
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 89,
+						"h": 86
+					},
+					"frame": {
+						"x": 92,
+						"y": 1,
+						"w": 89,
+						"h": 86
+					}
+				},
+				{
+					"filename": "bang_2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 55,
+						"h": 53
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 55,
+						"h": 52
+					},
+					"frame": {
+						"x": 183,
+						"y": 1,
+						"w": 55,
+						"h": 52
+					}
+				},
+				{
+					"filename": "attack_2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 22,
+						"h": 36
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 21,
+						"h": 35
+					},
+					"frame": {
+						"x": 110,
+						"y": 89,
+						"w": 21,
+						"h": 35
+					}
+				},
+				{
+					"filename": "move_3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 35,
+						"h": 35
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 1,
+						"w": 34,
+						"h": 34
+					},
+					"frame": {
+						"x": 133,
+						"y": 89,
+						"w": 34,
+						"h": 34
+					}
+				},
+				{
+					"filename": "attack_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 31,
+						"h": 37
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 3,
+						"w": 21,
+						"h": 34
+					},
+					"frame": {
+						"x": 169,
+						"y": 89,
+						"w": 21,
+						"h": 34
+					}
+				},
+				{
+					"filename": "bang_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 43,
+						"h": 41
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 42,
+						"h": 40
+					},
+					"frame": {
+						"x": 192,
+						"y": 55,
+						"w": 42,
+						"h": 40
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:87594567d8e4707409acfcec3fb1986b:6b925f2f88b182e20a82241bfd6e8b52:7232e5c4564c48ce7821741e80f218b0$"
+	}
+}
