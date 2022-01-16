@@ -4,8 +4,8 @@ import { Actor } from '../types/actor';
 import { Scene } from '../types/global';
 
 class Weapon extends Phaser.Physics.Arcade.Sprite {
-    alive = true;
-    model = {
+    public owner: Actor;
+    public model = {
         scale: {
             x: 1,
             y: 1,
@@ -15,14 +15,15 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
             y: 0.5,
         },
     };
-    owner: Actor;
-    press = false;
-    miliseconds = 100;
-    skillPlace: Phaser.GameObjects.Image;
-    coolDownRemaining: number = 0;
-    coolDown: number = 0;
-    coolDownText: Phaser.GameObjects.Text;
-    coolDownTimer: Phaser.Time.TimerEvent;
+    public coolDownRemaining: number = 0;
+    public coolDown: number = 0;
+
+    /* Private */
+    private _press = false;
+    private _miliseconds = 100;
+    private _skillPlace: Phaser.GameObjects.Image;
+    private _coolDownText: Phaser.GameObjects.Text;
+    private _coolDownTimer: Phaser.Time.TimerEvent;
 
     constructor(scene: Scene, options: any = {}) {
         // @ts-ignore
@@ -38,50 +39,49 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Tạo nút bấm cho đánh thường vào màn hình chính
      */
-    initBasicAttackThumb() {
+    public initBasicAttackThumb() {
         const { width, height } = this.scene.game.canvas;
-        this.skillPlace = this.scene.add.image(width - 100, height - 100, 'skill-place');
+        this._skillPlace = this.scene.add.image(width - 100, height - 100, 'skill-place');
 
-        this.skillPlace.setDepth(9999).setInteractive().setScrollFactor(0).setScale(0.8);
+        this._skillPlace.setDepth(9999).setInteractive().setScrollFactor(0).setScale(0.8);
         // @ts-ignore
-        this.skillPlace._pointer = true;
+        this._skillPlace._pointer = true;
 
         this.scene.input.addPointer(1);
         this.scene.input.on('gameobjectdown', (_pointer: any, gameObject: any) => {
             if (gameObject._pointer) {
-                this.press = true;
-                this.onPressBasicSkill(this.skillPlace);
+                this._press = true;
+                this.onPressBasicSkill(this._skillPlace);
             }
         });
         this.scene.input.on('gameobjectup', (_pointer: any, gameObject: any) => {
             if (gameObject._pointer) {
-                this.press = false;
+                this._press = false;
             }
         });
-        this.onPressBasicSkill(this.skillPlace);
+        this.onPressBasicSkill(this._skillPlace);
+    }
+    public canBasicAttack() {
+        return this.coolDownRemaining <= 0 && this.owner.status.canAttack && this.owner.status.alive;
     }
     /**
-     * Set thời gian hồi chiêu
+     * @summary Set thời gian hồi chiêu
      */
-    setCoolDown() {
-        if (this.owner && this.owner.status.alive && this.skillPlace) {
+    public setCoolDown() {
+        if (this.owner && this.owner.status.alive && this._skillPlace) {
             this.coolDownRemaining = this.coolDown;
-            this.coolDownText = this.scene.add.text(
-                this.skillPlace.x,
-                this.skillPlace.y,
-                GameHelper.milisecondsToSeconds(this.coolDownRemaining),
-            );
-            this.skillPlace.setAlpha(0.5);
-            this.coolDownText.setTintFill(0xffffff).setScrollFactor(0).setDepth(99999).setOrigin(0.5, 0.5);
-            this.coolDownTimer = this.scene.time.addEvent({
-                delay: this.miliseconds,
+            this._coolDownText = this.scene.add.text(this._skillPlace.x, this._skillPlace.y, GameHelper.milisecondsToSeconds(this.coolDownRemaining));
+            this._skillPlace.setAlpha(0.5);
+            this._coolDownText.setTintFill(0xffffff).setScrollFactor(0).setDepth(99999).setOrigin(0.5, 0.5);
+            this._coolDownTimer = this.scene.time.addEvent({
+                delay: this._miliseconds,
                 callback: () => {
-                    this.coolDownRemaining -= this.miliseconds;
-                    this.coolDownText && this.coolDownText.setText(GameHelper.milisecondsToSeconds(this.coolDownRemaining));
-                    if (this.coolDownRemaining == 0 && this.skillPlace) {
-                        this.coolDownTimer && this.coolDownTimer.remove();
-                        this.skillPlace.setAlpha(1);
-                        this.coolDownText && this.coolDownText.destroy();
+                    this.coolDownRemaining -= this._miliseconds;
+                    this._coolDownText && this._coolDownText.setText(GameHelper.milisecondsToSeconds(this.coolDownRemaining));
+                    if (this.coolDownRemaining == 0 && this._skillPlace) {
+                        this._coolDownTimer && this._coolDownTimer.remove();
+                        this._skillPlace.setAlpha(1);
+                        this._coolDownText && this._coolDownText.destroy();
                     }
                 },
                 loop: true,
@@ -91,10 +91,10 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
     }
     /**
      * @summary Bắt sự kiện người dùng bấm vào nút đánh thường
-     * @param {[this.skillPlace]} objects
+     * @param {[this._skillPlace]} objects
      */
-    onPressBasicSkill(objects: any) {
-        if (this.press) {
+    public onPressBasicSkill(objects: any) {
+        if (this._press) {
             // @ts-ignore
             this.onBasicAttack();
             setTimeout(() => {
@@ -102,7 +102,7 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
             }, 100);
         }
     }
-    setModel(options = {}) {
+    public setModel(options = {}) {
         this.model = Object.assign(this.model, options);
     }
     /**
@@ -112,7 +112,7 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
      * @param {Phaser.Atlas} atlas
      * @returns
      */
-    makeWeapon(owner: Actor, name: string, atlas: string) {
+    public makeWeapon(owner: Actor, name: string, atlas: string) {
         this.owner = owner;
         const { scale, origin } = this.model;
         !!atlas ? this.setTexture(atlas, name) : this.setTexture(name);
@@ -127,7 +127,7 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
      * @param {Actor} owner
      * @returns {Weapon} this
      */
-    onFollowedMove(owner: Actor): Weapon {
+    public onFollowedMove(owner: Actor): Weapon {
         const { scale } = this.model;
         const { x, y, _angle, direction, body } = owner;
         this.setPosition(x, y);
@@ -143,10 +143,10 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
      * @param {Phaser.Arcade.Sprite} objects
      * @param {Callback} callback
      */
-    bindCollider(objects: any) {
+    public bindCollider(objects: any) {
         this.scene.physics.add.collider(this, objects);
     }
-    resetState() {
+    public resetState() {
         // @ts-ignore
         this.body.setVelocity(0);
     }

@@ -1,3 +1,4 @@
+import { Actor } from "../types/actor";
 import { Scene } from "../types/global";
 
 interface BarOptions {
@@ -6,14 +7,16 @@ interface BarOptions {
 }
 
 class Bar extends Phaser.GameObjects.Graphics {
-    owner: Phaser.GameObjects.Sprite;
-    percentWidth: number;
-    total: number = 0;
-    remain: number = 0;
+    public owner: Actor;
+    public percentWidth: number;
+    public total: number = 0;
+    public remain: number = 0;
+
+    /* Private */
     private _x: number;
     private _y: number;
 
-    constructor(scene: Scene, x: number, y: number, owner: Phaser.GameObjects.Sprite, options: BarOptions = {}) {
+    constructor(scene: Scene, x: number, y: number, owner: Actor, options: BarOptions = {}) {
         super(scene);
         scene.physics.world.enable(this);
         scene.add.existing(this);
@@ -21,7 +24,7 @@ class Bar extends Phaser.GameObjects.Graphics {
         this.percentWidth = 40;
         this.total = options.total ?? 0;
         this.remain = options.remain ?? options.total ?? 0;
-        this.draw();
+        this._draw();
         this._x = x - 22;
         this._y = y - 35;
         // @ts-ignore
@@ -34,7 +37,7 @@ class Bar extends Phaser.GameObjects.Graphics {
      * @param {number} amount
      * @returns {bool} isDied
      */
-    decrease(amount: number): boolean {
+    public decrease(amount: number): boolean {
         this.remain -= Number(amount);
         if (this.remain < 0) {
             this.remain = 0;
@@ -42,7 +45,7 @@ class Bar extends Phaser.GameObjects.Graphics {
         const { x, y } = this.owner;
         this.x = x;
         this.y = y;
-        this.draw();
+        this._draw();
         this.setPosition(x - 22 - this.x, y - 35 - this.y);
         const isDied = this.remain <= 0;
         return isDied;
@@ -50,7 +53,7 @@ class Bar extends Phaser.GameObjects.Graphics {
     /**
      * @summary Vẽ thanh bar
      */
-    draw() {
+    private _draw() {
         const remain = Math.floor((this.remain / this.total) * this.percentWidth);
         this.clear();
         this.fillStyle(0x000000);
@@ -64,21 +67,18 @@ class Bar extends Phaser.GameObjects.Graphics {
      * @summary Di chuyển thanh bar theo actor
      * @param {Phaser.GameObjects.Sprite} owner
      */
-    onFollowedMove(owner: Phaser.GameObjects.Sprite) {
+    public onFollowedMove(owner: Phaser.GameObjects.Sprite) {
         const { body, x, y } = owner;
         this.x = x;
         this.y = y;
-        this.draw();
+        this._draw();
         this.setPosition(x - 22 - this.x, y - 35 - this.y);
         // @ts-ignore
         this.body.setVelocity(body.velocity.x, body.velocity.y);
     }
-    resetState() {
+    public resetState() {
         // @ts-ignore
         this.body.setVelocity(0);
-    }
-    destroy() {
-        super.destroy();
     }
 }
 

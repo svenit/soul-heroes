@@ -7,12 +7,15 @@ import Bullet from '../../bullet';
 import Weapon from '../../weapon';
 
 class SkyShurikenWeapon extends Weapon {
-    name = 'Sky Shuriken';
-    classess = ['Assassin'];
-    bulletImage = ['assassin-basic-attack', 'bullet_1.png'];
-    attackSound = 'shuriken';
+    public name = 'Sky Shuriken';
+    public classess = ['Assassin'];
+    public bulletImage = ['assassin-basic-attack', 'bullet_1.png'];
+    public attackSound = 'shuriken';
+    public coolDown = 800;
+    public coolDownRemaining = 0;
 
-    bulletOptions: Partial<BulletOptions> = {
+    /* Private */
+    private _bulletOptions: Partial<BulletOptions> = {
         speed: 7,
         attackRange: 600,
         width: 15,
@@ -23,22 +26,16 @@ class SkyShurikenWeapon extends Weapon {
         criticalChane: 30,
         deflection: 5,
     };
-    modelOptions = {
+    private _model = {
         scale: {
             x: 1.2,
             y: 1.2,
         },
     };
-    coolDown = 800;
-    coolDownRemaining = 0;
-
-    weapon: any;
-    weaponAnimation!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-    bullet!: Bullet;
+    private _weaponAnimation!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
     constructor(scene: Scene, options = {}) {
         super(scene, options);
-        this.scene = scene;
     }
 
     /**
@@ -46,20 +43,19 @@ class SkyShurikenWeapon extends Weapon {
      * @param {Actor} owner
      * @returns {Weapon}
      */
-    async make(owner: Actor): Promise<Weapon> {
+    public async make(owner: Actor): Promise<void> {
         await GameHelper.loadSprite('multiatlas', 'assassin-basic-attack', 'images/weapons/assassin/basic-attack.json', this.scene);
         this.owner = owner;
-        this.setModel(this.modelOptions);
+        this.setModel(this._model);
         this.setDepth(4);
-        this.weapon = this.makeWeapon(owner, 'attack_1.png', 'assassin-basic-attack');
-        this.initAnimations();
-        return this.weapon;
+        this.makeWeapon(owner, 'attack_1.png', 'assassin-basic-attack');
+        this._initAnimations();
     }
 
     /**
      * @summary Animation cho vũ khí khi đánh thường
      */
-    initAnimations() {
+    private _initAnimations() {
         this.scene.anims.create({
             key: 'assassin-basic-attack',
             frames: GameHelper.convertAnimations(this.scene, 'assassin-basic-attack', 'attack_'),
@@ -74,12 +70,12 @@ class SkyShurikenWeapon extends Weapon {
         });
         if (this.owner) {
             const { x, y } = this.owner;
-            this.weaponAnimation = this.scene.physics.add.sprite(x, y, '');
-            this.weaponAnimation.body.debugBodyColor = 0x0000;
-            this.weaponAnimation.setOriginFromFrame();
-            this.weaponAnimation.setScale(1.6, 1.6);
-            this.weaponAnimation.setDepth(4);
-            this.weaponAnimation.visible = false;
+            this._weaponAnimation = this.scene.physics.add.sprite(x, y, '');
+            this._weaponAnimation.body.debugBodyColor = 0x0000;
+            this._weaponAnimation.setOriginFromFrame();
+            this._weaponAnimation.setScale(1.6, 1.6);
+            this._weaponAnimation.setDepth(4);
+            this._weaponAnimation.visible = false;
             this.initBasicAttackThumb();
         }
     }
@@ -89,63 +85,64 @@ class SkyShurikenWeapon extends Weapon {
      * @param {Owner} owner
      */
     // @ts-ignore
-    onFollowedMove(owner: Actor) {
+    public onFollowedMove(owner: Actor) {
         const weapon = super.onFollowedMove(owner);
         const { x, y, body } = owner;
-        if (this.weaponAnimation) {
-            this.weaponAnimation.setPosition(x, y);
-            this.weaponAnimation.setVelocity(body.velocity.x, body.velocity.y);
-            this.weaponAnimation.angle = owner.angle;
-            this.weaponAnimation.body.angle = owner.angle;
-            this.weaponAnimation.scaleY = weapon.scaleY > 0 ? 1.6 : -1.6;
+        if (this._weaponAnimation) {
+            this._weaponAnimation.setPosition(x, y);
+            this._weaponAnimation.setVelocity(body.velocity.x, body.velocity.y);
+            this._weaponAnimation.angle = owner.angle;
+            this._weaponAnimation.body.angle = owner.angle;
+            this._weaponAnimation.scaleY = weapon.scaleY > 0 ? 1.6 : -1.6;
         }
     }
 
     /**
      * Reset state
      */
-    resetState() {
+    public resetState() {
         super.resetState();
-        if (this.weaponAnimation) {
-            this.weaponAnimation.setVelocity(0);
+        if (this._weaponAnimation) {
+            this._weaponAnimation.setVelocity(0);
         }
     }
 
     /**
      * Đánh thường khi actor trigger event
      */
-    onBasicAttack() {
-        if (this.coolDownRemaining > 0 || !this.weaponAnimation || !this.owner.status.canAttack) return;
-        this.setCoolDown();
-        if (!this.weaponAnimation.visible) {
-            this.weapon.visible = false;
-            this.weaponAnimation.visible = true;
-            this.weaponAnimation.angle = this.owner?.angle ?? 0;
-            this.bullet = new Bullet(this.scene, this.weaponAnimation.x, this.weaponAnimation.y, this.bulletImage, this.bulletOptions);
-            this.bullet.play('assassin-basic-attack-bullet');
-            // @ts-ignore
-            this.bullet.fire(this.owner, this.weaponAnimation, this.scene.enemies);
-            SoundManager.play('shuriken', this.scene, {
-                volume: 0.3,
-            });
-            this.weaponAnimation.play('assassin-basic-attack');
-        }
-        this.weaponAnimation.on(
-            Phaser.Animations.Events.ANIMATION_UPDATE,
-            (_object: any, event: Phaser.Animations.AnimationFrame) => {
-                if (this.weaponAnimation && this.weaponAnimation.visible) {
-                    this.weaponAnimation.body.setSize(event.frame.width, event.frame.height, false);
-                    if (event.isLast) {
-                        this.weaponAnimation.body.setSize(0.1, 0.1, false);
-                        this.weapon.angle = this.owner?.angle ?? 1;
-                        this.weapon.visible = true;
-                        this.weaponAnimation.visible = false;
-                        this.weaponAnimation.stop();
+    public onBasicAttack() {
+        if (this.canBasicAttack()) {
+            this.setCoolDown();
+            if (!this._weaponAnimation.visible) {
+                this.visible = false;
+                this._weaponAnimation.visible = true;
+                this._weaponAnimation.angle = this.owner?.angle ?? 0;
+                const bullet = new Bullet(this.scene, this._weaponAnimation.x, this._weaponAnimation.y, this.bulletImage, this._bulletOptions);
+                bullet.play('assassin-basic-attack-bullet');
+                // @ts-ignore
+                bullet.fire(this.owner, this._weaponAnimation, this.scene.enemies);
+                SoundManager.play('shuriken', this.scene, {
+                    volume: 0.3,
+                });
+                this._weaponAnimation.play('assassin-basic-attack');
+            }
+            this._weaponAnimation.on(
+                Phaser.Animations.Events.ANIMATION_UPDATE,
+                (_object: any, event: Phaser.Animations.AnimationFrame) => {
+                    if (this._weaponAnimation && this._weaponAnimation.visible) {
+                        this._weaponAnimation.body.setSize(event.frame.width, event.frame.height, false);
+                        if (event.isLast) {
+                            this._weaponAnimation.body.setSize(0.1, 0.1, false);
+                            this.angle = this.owner?.angle ?? 1;
+                            this.visible = true;
+                            this._weaponAnimation.visible = false;
+                            this._weaponAnimation.stop();
+                        }
                     }
-                }
-            },
-            this.scene,
-        );
+                },
+                this.scene,
+            );
+        }
     }
 }
 

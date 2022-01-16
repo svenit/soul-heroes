@@ -8,19 +8,16 @@ import { OnAttacked, PhysicBody, Scene, Stats } from '../types/global';
 import { GearOptions, PlayerStatuses } from '../types/player';
 import Bar from './bar';
 import Shadow from './shadow';
+import Weapon from './weapon';
 
 class Player extends Phaser.Physics.Arcade.Sprite {
-    status: PlayerStatuses = {
+    public status: PlayerStatuses = {
         alive: true,
         canMove: true,
         canAttack: true,
         canUseSkill: true,
     };
-    options = {
-        makeShadow: true,
-        autoAim: true,
-    };
-    stats: Stats = {
+    public stats: Stats = {
         strength: 0,
         intelligence: 0,
         hp: 0,
@@ -36,7 +33,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         weaponMastery: 0,
         cooldownSpeed: 0,
     };
-    model = {
+    public model = {
         offset: {
             x: 0,
             y: 0,
@@ -44,36 +41,42 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         width: 32,
         height: 32,
     };
-    followers: any = [];
-    gears = [];
+    public gearContainer: Phaser.GameObjects.Container;
+    public gearsKeys: { [key: string]: Phaser.GameObjects.Image } = {};
+    public followers: any = [];
+    public shadow: Shadow;
+    public hp: Bar;
+    public weapon: Weapon;
+    public direction: string = '';
 
-    gfx: Phaser.GameObjects.Graphics;
-    shadow: any;
-    gearsKeys: any = {};
-    gearContainer: Phaser.GameObjects.Container;
-    hp: Bar;
-    gearTimer: Phaser.Time.TimerEvent;
-    isGearDown: boolean = false;
-    footStepSound: Phaser.Sound.BaseSound;
-    _direction: string = '';
-    _angle: number = 0;
-    direction: string = '';
-    autoAimEnemyTimer: Phaser.Time.TimerEvent;
-    weapon: any;
+    /* Public Exception */
+    public _direction: string = '';
+    public _angle: number = 0;
+
+    /* Private */
+    private _options = {
+        makeShadow: true,
+        autoAim: true,
+    };
+    private _gfx: Phaser.GameObjects.Graphics;
+    private _gearTimer: Phaser.Time.TimerEvent;
+    private _isGearDown: boolean = false;
+    private _footStepSound: Phaser.Sound.BaseSound;
+    private _autoAimEnemyTimer: Phaser.Time.TimerEvent;
 
     constructor(scene: Scene, x: number, y: number, options = {}) {
         // @ts-ignore
         super(scene, x, y);
-        this.options = Object.assign(this.options, options);
+        this._options = Object.assign(this._options, options);
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
-        this.gfx = this.scene.add.graphics();
+        this._gfx = this.scene.add.graphics();
         this.name = Groups.Player;
         // @ts-ignore
         this.body.setVelocity(0).setCollideWorldBounds(true);
         this.body.setSize(32, 46, true);
         this.body.debugBodyColor = 0x09b500;
-        if (this.options.makeShadow) {
+        if (this._options.makeShadow) {
             this.shadow = new Shadow(this.scene, this);
             this.followers.push(this.shadow);
         }
@@ -84,7 +87,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * Set điểm thuộc tính cho actor
      */
-    initStats(stats: Partial<Stats> = {}) {
+    public initStats(stats: Partial<Stats> = {}) {
         this.stats = Object.assign(this.stats, stats);
         this.hp = new Bar(this.scene, this.x, this.y, this, {
             total: this.stats.hp,
@@ -95,7 +98,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
      * @param {gearsOptions} options
      * @summary Trang bị các gear cho actor
      */
-    initGear(options: Partial<GearOptions> = {}) {
+    public initGear(options: Partial<GearOptions> = {}) {
         this.gearsKeys = {};
 
         this.gearContainer = this.scene.add.container();
@@ -122,13 +125,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         // @ts-ignore
         this.gearContainer.body.setSize(0.1, 0.1).setCollideWorldBounds(true);
 
-        this.gearTimer = this.scene.time.addEvent({
+        this._gearTimer = this.scene.time.addEvent({
             delay: 200,
             callback: () => {
                 if (this.status.canMove) {
                     this.gearContainer &&
-                        this.gearContainer.setPosition(this.gearContainer.x, this.isGearDown ? this.gearContainer.y - 1 : this.gearContainer.y + 1);
-                    this.isGearDown = !this.isGearDown;
+                        this.gearContainer.setPosition(this.gearContainer.x, this._isGearDown ? this.gearContainer.y - 1 : this.gearContainer.y + 1);
+                    this._isGearDown = !this._isGearDown;
                 }
             },
             callbackScope: this,
@@ -138,8 +141,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Init âm thanh lúc di chuyển
      */
-    async initMovementSound() {
-        this.footStepSound = this.scene.sound.add('foot-step', {
+    public async initMovementSound() {
+        this._footStepSound = this.scene.sound.add('foot-step', {
             volume: 0.05,
             loop: false,
             delay: 0,
@@ -148,7 +151,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Set model
      */
-    setModel(key: string, value: any) {
+    public setModel(key: string, value: any) {
         // @ts-ignore
         this.model[key] = Object.assign(this.model[key], value);
         this.updateModel();
@@ -156,7 +159,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Cập nhật model
      */
-    updateModel() {
+    public updateModel() {
         const { offset } = this.model;
         this.body.offset.x = offset.x;
         this.body.offset.y = offset.y;
@@ -164,9 +167,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Di chuyển gears theo actor
      */
-    moveGear() {
+    public moveGear() {
         if (this.gearContainer) {
-            this.gearContainer.setPosition(this.x, this.isGearDown ? this.y - 1 : this.y + 1);
+            this.gearContainer.setPosition(this.x, this._isGearDown ? this.y - 1 : this.y + 1);
             // @ts-ignore
             this.gearContainer.body.setVelocity(this.body.velocity.x, this.body.velocity.y);
             // @ts-ignore
@@ -176,7 +179,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Bắt sự kiện actor di chuyển
      */
-    onMove() {
+    public onMove() {
         if (this.status.alive && this.status.canMove) {
             const { offset } = this.model;
             this.body.offset.set(offset.x, offset.y);
@@ -184,7 +187,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.triggerFolowers();
             this.moveGear();
             this.autoAimEnemy();
-            if (!this.footStepSound.isPlaying) this.footStepSound.play();
+            if (!this._footStepSound.isPlaying) this._footStepSound.play();
             /* Vẽ attack range */
             if (GameConfig.showAutoAimRange) GameHelper.drawAutoAimRange(this.scene, this, this.stats.attackRange ?? 0);
         }
@@ -192,13 +195,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Di chuyển theo chiều dọc
      */
-    moveByVertical() {
+    public moveByVertical() {
         this.direction = this.body.velocity.y <= 0 ? Direction.TOP : Direction.BOTTOM;
     }
     /**
      * @summary Di chuyển theo chiều ngang
      */
-    moveByHorizontal() {
+    public moveByHorizontal() {
         if (this.gearContainer) {
             if (this.body.velocity.x == 0) return;
             if (this.body.velocity.x < 0) {
@@ -212,25 +215,23 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Lấy ra đối thủ gần nhất và quay actor theo chiều đối thủ nếu bật autoAim
      */
-    autoAimEnemy() {
+    public autoAimEnemy() {
         if (this.status.alive && this.status.canMove) {
             this.angle = this._angle ?? this.angle;
             if (this.weapon) this.weapon.angle = this.angle;
             this.moveByVertical();
             this.moveByHorizontal();
-            if (this.options.autoAim) {
-                this.gfx.clear();
+            if (this._options.autoAim) {
+                this._gfx.clear();
                 /* Lấy enemy gần nhất */
-                const closestEnemy = this.scene.physics.closest(
-                    this,
-                    // @ts-ignore
-                    this.scene.enemies.filter((enemy: Actor) => enemy.status.alive),
-                ) as PhysicBody;
+                // @ts-ignore
+                const enemiesLive = this.scene.enemies.filter((enemy: Actor) => enemy.status.alive);
+                const closestEnemy = this.scene.physics.closest(this, enemiesLive) as PhysicBody;
                 if (closestEnemy && this.weapon) {
                     const { angle, distance } = GameHelper.getDistance(this, closestEnemy);
                     if (this.stats.attackRange && this.stats.attackRange >= distance) {
                         /* Hiển thị tool line đến đối tương gần nhất */
-                        if (GameConfig.showAimLine) this.gfx.lineStyle(2, 0xff3300).lineBetween(closestEnemy.x, closestEnemy.y, this.x, this.y);
+                        if (GameConfig.showAimLine) this._gfx.lineStyle(2, 0xff3300).lineBetween(closestEnemy.x, closestEnemy.y, this.x, this.y);
                         /* Auto aim vào đối thủ */
                         this.angle = angle;
                         this.weapon.angle = angle;
@@ -249,13 +250,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Trigger event các follower vào actor khi actor di chuyển
      */
-    triggerFolowers() {
+    public triggerFolowers() {
         if (this.status.alive) this.followers.forEach((follower: any) => follower.onFollowedMove(this));
     }
     /**
      * @summary Bắt sự kiện va chạm của actor với các objects khác
      */
-    bindCollider(objects: any, callback: ArcadePhysicsCallback) {
+    public bindCollider(objects: any, callback?: ArcadePhysicsCallback) {
         this.scene.physics.add.collider(this, objects, callback);
         this.bindColliderForGears(objects, callback);
     }
@@ -263,7 +264,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
      *
      * @summary Bắt sự kiện va chạm của các gears với các objects khác
      */
-    bindColliderForGears(objects: any, callback: ArcadePhysicsCallback) {
+    public bindColliderForGears(objects: any, callback?: ArcadePhysicsCallback) {
         this.gearContainer && this.scene.physics.add.collider(this.gearContainer, objects, callback);
     }
     /**
@@ -271,7 +272,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
      * @param {Weapon} weapon
      * @summary Sử dụng vũ khí cho actor
      */
-    async useWeapon(weapon: any) {
+    public async useWeapon(weapon: any) {
         await weapon.make(this);
         this.weapon = weapon;
         this.followers.push(weapon);
@@ -281,10 +282,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             y: 8,
         });
         this.autoAimEnemy();
-        this.autoAimEnemyTimer = this.scene.time.addEvent({
+        this._autoAimEnemyTimer = this.scene.time.addEvent({
             delay: 10,
             callback: () => {
-                if (!this.status.alive && this.autoAimEnemyTimer) return this.autoAimEnemyTimer.remove();
+                if (!this.status.alive && this._autoAimEnemyTimer) return this._autoAimEnemyTimer.remove();
                 this.autoAimEnemy();
             },
             callbackScope: this,
@@ -294,7 +295,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Reset state của actor và các follower
      */
-    resetState() {
+    public resetState() {
         if (this.status.alive) {
             // @ts-ignore
             this.body.setVelocity(0);
@@ -306,12 +307,12 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Trigger khi enemy bị bạn bắn chết
      */
-    onEnemyDie() {}
+    public onEnemyDie() {}
     /**
      * @summary Khi actor bị tấn công và nhận damage, nếu actor chết gọi callback onEnemyDie của người ra đòn
      * @param {number} damage
      */
-    onAttacked({ actor, damage, showText = true, criticalAttack = false }: OnAttacked) {
+    public onAttacked({ actor, damage, showText = true, criticalAttack = false }: OnAttacked) {
         const isDied = this.hp && this.hp.decrease(damage);
         if (showText) {
             let textOption: Pick<Phaser.GameObjects.TextStyle, 'color'> = {
@@ -337,7 +338,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Bắt sự kiện khi actor chết
      */
-    async onDie() {
+    public async onDie() {
         await GameHelper.loadSprite('image', 'die', 'images/common/die.png', this.scene);
         this.angle = 0;
         this.gearContainer && this.gearContainer.destroy();
@@ -349,7 +350,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     /**
      * @summary Bắt sự kiện khi actor object bị destroy
      */
-    async destroy() {
+    public async destroy() {
         await this.onDie();
         this.followers.forEach((follower: any) => follower.destroy());
         this.scene.tweens.add({

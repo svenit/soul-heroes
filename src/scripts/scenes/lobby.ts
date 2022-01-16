@@ -1,31 +1,27 @@
 import Assassin from '../entities/classes/assassin';
 import BaseMonster from '../entities/monster';
+import Player from '../entities/player';
 import SkyShurikenWeapon from '../entities/weapons/assassin/sky-shuriken';
 import GameHelper from '../helpers/game';
 import JoystickHandler from '../helpers/joystick';
 import MonsterManager from '../managers/monster';
+import { Actor } from '../types/actor';
 import BaseScene from './base';
-
-interface Phaser {
-    Scene: {
-        bulletColliders?: any
-    }
-}
-
 class LobbyScene extends BaseScene {
-    enemies: any[] = [];
-    bulletColliders: any[] = [];
-    globalColliders: any[] = [];
-    map!: Phaser.Tilemaps.Tilemap;
-    groundBelow!: Phaser.Tilemaps.TilemapLayer;
-    ground!: Phaser.Tilemaps.TilemapLayer;
-    groundFront!: Phaser.Tilemaps.TilemapLayer;
-    character: any;
-    weapon!: SkyShurikenWeapon;
-    joystickHandler!: JoystickHandler;
-    joyStick: any;
-    cusors!: Phaser.Types.Input.Keyboard.CursorKeys;
-    delta: number = 0;
+    public globalColliders: Phaser.Physics.Arcade.Sprite[] | Phaser.Tilemaps.TilemapLayer[] = [];
+    public bulletColliders: Phaser.Physics.Arcade.Sprite[] | Phaser.Tilemaps.TilemapLayer[] = [];
+    public enemies: Actor[] = [];
+    public map!: Phaser.Tilemaps.Tilemap;
+    public character: Player;
+
+    /* Private */
+    private _groundBelow!: Phaser.Tilemaps.TilemapLayer;
+    private _ground!: Phaser.Tilemaps.TilemapLayer;
+    private _groundFront!: Phaser.Tilemaps.TilemapLayer;
+    private _weapon!: SkyShurikenWeapon;
+    private _joystickHandler!: JoystickHandler;
+    private _joyStick: any;
+    private _cusors!: Phaser.Types.Input.Keyboard.CursorKeys;
 
     constructor() {
         super('LobbyScene');
@@ -52,86 +48,73 @@ class LobbyScene extends BaseScene {
     }
     create() {
         super.create();
-        this.scale.lockOrientation('landscape');
-
         /* Load map */
-        this.map = this.add.tilemap('map');
-        const greenWall = this.map.addTilesetImage('GreenWall', 'GreenWall');
-        const road = this.map.addTilesetImage('Road', 'Road');
-        this.groundBelow = this.map.createLayer('BackgroundBelow', road, 0, 0);
-        this.ground = this.map.createLayer('Background', greenWall, 0, 0);
-        this.groundFront = this.map.createLayer('BackgroundFront', greenWall, 0, 0);
-        this.groundFront.setDepth(4);
-
-        /* Set physics cho map */
-        this.physics.world.setBounds(0, 0, this.ground.width, this.ground.height);
-        this.ground.setCollisionByProperty({ collides: true });
-
-        /* Render map collides khi bật debug mode */
-        GameHelper.renderDebug(this.ground, this);
-        GameHelper.renderDebug(this.groundFront, this);
-
+        this.loadMap();
         /* Set collides cho bullet và global colliers */
-        this.bulletColliders = [this.ground, this.groundFront];
-        this.globalColliders = [this.ground];
-
+        this.bulletColliders = [this._ground, this._groundFront];
+        this.globalColliders = [this._ground];
         /* Spawn monsters */
         this.map.objects.forEach((object) =>
             MonsterManager.spawn(object, this, (enemy: BaseMonster) => {
                 this.enemies.push(enemy);
             }),
         );
-
         this.character = new Assassin(this, 200, 200);
-
-        this.weapon = new SkyShurikenWeapon(this, {
-            colliders: [this.ground],
+        this._weapon = new SkyShurikenWeapon(this, {
+            colliders: [this._ground],
         });
-
-        this.character.useWeapon(this.weapon);
-        this.character.bindCollider([this.ground]);
-
-        this.cameras.main.setBounds(0, 0, this.ground.width, this.ground.height);
+        this.character.useWeapon(this._weapon);
+        this.character.bindCollider([this._ground]);
+        this.cameras.main.setBounds(0, 0, this._ground.width, this._ground.height);
         this.cameras.main.startFollow(this.character, true);
-
-        this.joystickHandler = new JoystickHandler();
-
+        this._joystickHandler = new JoystickHandler();
         // @ts-ignore
-        this.joyStick = this.plugins.get('joystick').add(this, {
+        this._joyStick = this.plugins.get('joystick').add(this, {
             x: 100,
             y: this.game.canvas.height - 100,
             base: this.add.image(0, 0, 'joystick-base').setScale(0.5),
             thumb: this.add.image(0, 0, 'joystick-thumb').setScale(0.5),
         });
-
-        this.joyStick.on('start', () => (this.joystickHandler.isActive = true));
-        this.joyStick.on('update', () => this.joystickHandler.make(this.joyStick), this);
-        this.joyStick.on('stop', () => (this.joystickHandler.isActive = false));
-
-        this.joyStick.base.setDepth(999);
-        this.joyStick.thumb.setDepth(999);
-
-        this.cusors = this.input.keyboard.createCursorKeys();
+        this._joyStick.on('start', () => (this._joystickHandler.isActive = true));
+        this._joyStick.on('update', () => this._joystickHandler.make(this._joyStick), this);
+        this._joyStick.on('stop', () => (this._joystickHandler.isActive = false));
+        this._joyStick.base.setDepth(999);
+        this._joyStick.thumb.setDepth(999);
+        this._cusors = this.input.keyboard.createCursorKeys();
         this.listenClientEvent();
+    }
+    loadMap() {
+        this.map = this.add.tilemap('map');
+        const greenWall = this.map.addTilesetImage('GreenWall', 'GreenWall');
+        const road = this.map.addTilesetImage('Road', 'Road');
+        this._groundBelow = this.map.createLayer('BackgroundBelow', road, 0, 0);
+        this._ground = this.map.createLayer('Background', greenWall, 0, 0);
+        this._groundFront = this.map.createLayer('BackgroundFront', greenWall, 0, 0);
+        this._groundFront.setDepth(4);
+        /* Set physics cho map */
+        this.physics.world.setBounds(0, 0, this._ground.width, this._ground.height);
+        this._ground.setCollisionByProperty({ collides: true });
+        /* Render map collides khi bật debug mode */
+        GameHelper.renderDebug(this._ground, this);
+        GameHelper.renderDebug(this._groundFront, this);
     }
     listenClientEvent() {
         window.addEventListener('resize', () => {
-            if (this.joyStick) {
-                this.joyStick.base.setPosition(100, this.game.canvas.height - 100);
-                this.joyStick.thumb.setPosition(100, this.game.canvas.height - 100);
+            if (this._joyStick) {
+                this._joyStick.base.setPosition(100, this.game.canvas.height - 100);
+                this._joyStick.thumb.setPosition(100, this.game.canvas.height - 100);
             }
         });
     }
     update(time: number, delta: number) {
         super.update(time, delta);
-        this.delta = delta / 1000;
         this.character.resetState();
-        if (this.joystickHandler.isActive) {
-            GameHelper.moveByAngle(this.character, this.joystickHandler.angle, this.character.stats.speed);
+        if (this._joystickHandler.isActive) {
+            GameHelper.moveByAngle(this.character, this._joystickHandler.angle, this.character.stats.speed);
             this.character.onMove();
         }
-        if (this.cusors.space.isDown) {
-            this.weapon.onBasicAttack();
+        if (this._cusors.space.isDown) {
+            this._weapon.onBasicAttack();
         }
     }
 }

@@ -1,39 +1,40 @@
 import GameHelper from '../../helpers/game';
 import { BulletOptions } from '../../types/bullet';
 import { Scene } from '../../types/global';
+import { MonsterStats } from '../../types/monster';
 import BaseMonster from '../monster';
-
 class FireSlime extends BaseMonster {
-    bulletOptions: Pick<BulletOptions, "damage"> = {
+    /* Private */
+    private _bulletOptions: Pick<BulletOptions, 'damage'> = {
         damage: [20, 20],
     };
-
-    /* Private */
-    _fires: { [id: string]: Phaser.Physics.Arcade.Sprite } = {};
+    private _stats: Partial<MonsterStats> = {
+        hp: 1000,
+        mp: 0,
+        speed: 0.8,
+        vision: 300,
+        scale: 1.5,
+        movementRound: 2,
+        maxMovementRound: 2,
+        attackRange: 0,
+    };
+    private _fires: { [id: string]: Phaser.Physics.Arcade.Sprite } = {};
 
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y);
         this.setDepth(3);
         this.setBodySize(22, 22, true);
-        this.setStats({
-            hp: 1000,
-            mp: 0,
-            speed: 0.8,
-            vision: 300,
-            scale: 1.5,
-            movementRound: 2,
-            maxMovementRound: 2,
-            attackRange: 0,
-        });
+        this.setStats(this._stats);
         this.setScale(this.stats.scale);
     }
-    async makeMonster() {
+    public async makeMonster() {
         super.makeMonster();
-        await this.makeAnimations();
+        await this._makeAnimations();
         this.autoMoveToHaterAndAttack();
+        this._attack();
         this.play('fire-slime-move');
     }
-    async makeAnimations() {
+    private async _makeAnimations() {
         await GameHelper.loadSprite('multiatlas', 'fire-slime', 'images/monster/fire-slime/base.json', this.scene);
         this.scene.anims.create({
             key: 'fire-slime-move',
@@ -47,6 +48,8 @@ class FireSlime extends BaseMonster {
             frameRate: 10,
             repeat: 5,
         });
+    }
+    private _attack() {
         this.on(Phaser.Animations.Events.ANIMATION_UPDATE, (object: Phaser.Animations.Animation, event: Phaser.Animations.AnimationFrame) => {
             if (event.isLast && object.key == 'fire-slime-move') {
                 const id = GameHelper.uuid();
@@ -59,7 +62,7 @@ class FireSlime extends BaseMonster {
                 this._fires[id].on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => this._fires[id].destroy());
                 this.scene.physics.add.collider(this._fires[id], this.haters, (fire, hater) => {
                     fire.destroy();
-                    const [min, max] = this.bulletOptions.damage;
+                    const [min, max] = this._bulletOptions.damage;
                     const damage = GameHelper.randomInRange(min, max);
                     // @ts-ignore
                     hater.onAttacked && hater.onAttacked({ actor: fire, damage });

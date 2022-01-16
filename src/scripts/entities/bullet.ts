@@ -6,12 +6,12 @@ import { BulletOptions } from '../types/bullet';
 import { BaseActorStatus, CollierType, Scene } from '../types/global';
 
 class Bullet extends Phaser.Physics.Arcade.Sprite {
-    status: BaseActorStatus = {
+    public status: BaseActorStatus = {
         alive: true,
         canMove: true,
         canAttack: true,
     };
-    options: BulletOptions = {
+    public options: BulletOptions = {
         damage: [1, 1],
         speed: 1,
         attackRange: 1,
@@ -26,7 +26,9 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
         criticalX: 2,
         deflection: 0,
     };
-    timer: Phaser.Time.TimerEvent;
+
+    /* Private */
+    private _timer: Phaser.Time.TimerEvent;
 
     constructor(scene: Scene, x: number, y: number, texture: string | string[], options: Partial<BulletOptions> = {}) {
         // @ts-ignore
@@ -42,7 +44,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
         this.name = Groups.Bullet;
         this.options = Object.assign(this.options, options);
     }
-    fire(
+    public fire(
         actor: Actor,
         weapon: Phaser.GameObjects.Sprite,
         targets: Phaser.GameObjects.GameObject[] = [],
@@ -88,7 +90,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
             if (bullet.attacked != target) {
                 if (target.status.alive) {
                     bullet.destroy();
-                    if (this.timer) this.timer.remove();
+                    if (this._timer) this._timer.remove();
                 }
                 realDamage = GameHelper.convertToFloat(realDamage, 2);
                 target.onAttacked && target.onAttacked({ actor, damage: realDamage, criticalAttack });
@@ -97,7 +99,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
             bullet.attacked = target;
         });
         /* Nếu khoảng cách viên đạn vượt quá attackRange thì destroy */
-        this.timer = this.scene.time.addEvent({
+        this._timer = this.scene.time.addEvent({
             delay: 10,
             callback: () => {
                 const { distance } = GameHelper.getDistance(freezeWeapon, this);
@@ -106,7 +108,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
                 realDamage += damageIcre;
                 if (distance > attackRange) {
                     this.destroy();
-                    this.timer && this.timer.remove();
+                    this._timer && this._timer.remove();
                 }
             },
             callbackScope: this,

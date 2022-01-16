@@ -1,9 +1,10 @@
-import Phaser from 'phaser'
-import config from './config'
-import LoginScene from './scenes/login'
+import config from './config';
+import LoginScene from './scenes/login';
 
-new Phaser.Game(
-  Object.assign(config, {
-    scene: [LoginScene]
-  })
-)
+(() => {
+    new Phaser.Game(
+        Object.assign(config, {
+            scene: [LoginScene],
+        }),
+    );
+})();

@@ -15,7 +15,7 @@ class MonsterManager {
      * @param {Scene} scene
      * @param {Callback Function} callback
      */
-    static spawn(object: Phaser.Tilemaps.ObjectLayer, scene: Scene, callback: CallableFunction) {
+    static spawn(object: Phaser.Tilemaps.ObjectLayer, scene: Scene, callback?: CallableFunction) {
         if (object.name.includes(this.prefix)) {
             const monsterName = object.name.replace(/monster_/gim, '');
             if (!monstersMap.has(monsterName)) {
@@ -28,7 +28,7 @@ class MonsterManager {
                 for (let monster of object.objects) {
                     const monsterInstane = new MonsterInstane(scene, monster.x, monster.y);
                     await monsterInstane.makeMonster();
-                    if (callback) callback(monsterInstane);
+                    callback && callback(monsterInstane);
                 }
             });
         }

@@ -1,12 +1,14 @@
 import GameHelper from '../../helpers/game';
 import { Actor } from '../../types/actor';
 import { BaseBullet, BulletOptions } from '../../types/bullet';
-import { CollierType, Scene } from '../../types/global';
+import { CollierType, Scene, Stats } from '../../types/global';
+import { MonsterStats } from '../../types/monster';
 import Bullet from '../bullet';
 import BaseMonster from '../monster';
 
 class Boomer extends BaseMonster {
-    bulletOptions: Partial<BulletOptions> = {
+    /* Private */
+    private _bulletOptions: Partial<BulletOptions> = {
         damage: [10, 50],
         speed: 3,
         scale: 1.5,
@@ -17,47 +19,46 @@ class Boomer extends BaseMonster {
         rotation: 0.1,
         criticalChane: 40,
     };
-
-    /* Private */
-    _coolDownRemaining = 0;
-    _coolDown = 2000;
+    private _stats: Partial<MonsterStats> = {
+        hp: 1000,
+        mp: 0,
+        speed: 0.5,
+        vision: 300,
+        scale: 1.5,
+        attackRange: 300,
+        movementRound: 2,
+        maxMovementRound: 2,
+    };
+    private _coolDownRemaining = 0;
+    private _coolDown = 2000;
 
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y);
         this.setDepth(3);
         this.setBodySize(22, 22, true);
         this.body.setOffset(0, 12);
-        this.setStats({
-            hp: 1000,
-            mp: 0,
-            speed: 0.5,
-            vision: 300,
-            scale: 1.5,
-            attackRange: 300,
-            movementRound: 2,
-            maxMovementRound: 2,
-        });
+        this.setStats(this._stats);
         this.setScale(this.stats.scale);
     }
-    async makeMonster() {
+    public async makeMonster() {
         super.makeMonster();
-        await this.makeAnimations();
+        await this._makeAnimations();
         this.autoMoveToHaterAndAttack(() => {
             this.play('boomer-move');
         });
         this.play('boomer-move');
     }
-    attack(_hater: Actor, angle: number) {
+    public attack(_hater: Actor, angle: number) {
         if (this._coolDownRemaining == 0 && this.status.alive) {
             this.play('boomer-attack');
-            const bullet = new Bullet(this.scene, this.x, this.y, ['boomer', 'bullet.png'], this.bulletOptions);
+            const bullet = new Bullet(this.scene, this.x, this.y, ['boomer', 'bullet.png'], this._bulletOptions);
             const bulletObjectOptions = { angle, x: this.x, y: this.y } as Phaser.GameObjects.Sprite;
             bullet.fire(
                 this,
                 bulletObjectOptions,
                 this.haters,
-                (hater: Actor) => this.onAttackHater(hater),
-                (bullet: CollierType & BaseBullet, _ground: CollierType) => this.onBulletColliderOnGround(bullet),
+                (hater: Actor) => this._onAttackHater(hater),
+                (bullet: CollierType & BaseBullet, _ground: CollierType) => this._onBulletColliderOnGround(bullet),
             );
             this._coolDownRemaining = this._coolDown;
             setTimeout(() => {
@@ -65,7 +66,7 @@ class Boomer extends BaseMonster {
             }, this._coolDown);
         }
     }
-    onBulletColliderOnGround(bullet: CollierType & BaseBullet) {
+    private _onBulletColliderOnGround(bullet: CollierType & BaseBullet) {
         if (!bullet.collidesTimes) {
             // @ts-ignore
             bullet.body.setVelocity(200, 200).setBounce(1, 1);
@@ -73,11 +74,11 @@ class Boomer extends BaseMonster {
         }
         bullet.collidesTimes++;
         if (bullet.collidesTimes == 3) {
-            this.onAttackHater(bullet);
+            this._onAttackHater(bullet);
             bullet.destroy();
         }
     }
-    onAttackHater(hater: Actor | CollierType & BaseBullet) {
+    private _onAttackHater(hater: Actor | (CollierType & BaseBullet)) {
         if (this.status.alive) {
             const boom = this.scene.add.sprite(hater.x, hater.y, '');
             boom.setScale(1.3);
@@ -85,7 +86,7 @@ class Boomer extends BaseMonster {
             boom.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => boom.destroy());
         }
     }
-    async makeAnimations() {
+    private async _makeAnimations() {
         await GameHelper.loadSprite('multiatlas', 'boomer', 'images/monster/boomer/base.json', this.scene);
         this.scene.anims.create({
             key: 'boomer-move',

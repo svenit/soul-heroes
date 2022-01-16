@@ -6,12 +6,12 @@ interface JoyStickType {
 }
 
 class JoystickHandler {
-    angle: number;
-    force: number;
-    direction: string | null;
-    isActive: boolean = false;
-    cursorKeys: any;
-    rotation: number | undefined;
+    public angle: number;
+    public force: number;
+    public direction: string | null;
+    public isActive: boolean = false;
+    public cursorKeys: any;
+    public rotation: number | undefined;
 
     constructor() {
         this.angle = 0;
@@ -19,7 +19,7 @@ class JoystickHandler {
         this.direction = null;
         this.isActive = false;
     }
-    make(joyStick: JoyStickType) {
+    public make(joyStick: JoyStickType) {
         this.angle = Math.floor(joyStick.angle * 100) / 100;
         this.force = Math.floor(joyStick.force * 100) / 100;
         this.rotation = joyStick.rotation;

@@ -3,8 +3,10 @@ import { Classess, GearOptions } from '../../types/player';
 import Player from '../player';
 
 class Priest extends Player {
-    class = Classess.Priest
-    gearsOptions: GearOptions = {
+    public class = Classess.Priest
+
+    /* Private */
+    private _gearsOptions: GearOptions = {
         body: 'baseBody',
         face: 'baseFace',
         eyes: 'baseEyes',
@@ -14,7 +16,7 @@ class Priest extends Player {
     }
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y);
-        this.initGear(this.gearsOptions);
+        this.initGear(this._gearsOptions);
     }
 }
 

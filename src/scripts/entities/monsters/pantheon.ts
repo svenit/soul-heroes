@@ -2,11 +2,13 @@ import GameHelper from '../../helpers/game';
 import { Actor } from '../../types/actor';
 import { BulletOptions } from '../../types/bullet';
 import { Scene } from '../../types/global';
+import { MonsterStats } from '../../types/monster';
 import Bullet from '../bullet';
 import BaseMonster from '../monster';
 
 class Pantheon extends BaseMonster {
-    bulletOptions: Partial<BulletOptions> = {
+    /* Private */
+    private _bulletOptions: Partial<BulletOptions> = {
         damage: [50, 100],
         speed: 3,
         scale: 1.5,
@@ -15,38 +17,38 @@ class Pantheon extends BaseMonster {
         center: true,
         attackRange: 900,
     };
+    private _stats: Partial<MonsterStats> = {
+        hp: 1000,
+        mp: 0,
+        speed: 0.8,
+        vision: 300,
+        scale: 1.5,
+        attackRange: 300,
+        movementRound: 2,
+        maxMovementRound: 2,
+    };
+    private _coolDownRemaining = 0;
+    private _coolDown = 2000;
 
-    /* Private */
-    _coolDownRemaining = 0;
-    _coolDown = 2000;
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y);
         this.setDepth(3);
         this.setBodySize(22, 22, true);
-        this.setStats({
-            hp: 1000,
-            mp: 0,
-            speed: 0.8,
-            vision: 300,
-            scale: 1.5,
-            attackRange: 300,
-            movementRound: 2,
-            maxMovementRound: 2,
-        });
+        this.setStats(this._stats);
         this.setScale(this.stats.scale);
     }
-    async makeMonster() {
+    public async makeMonster() {
         super.makeMonster();
-        await this.makeAnimations();
+        await this._makeAnimations();
         this.autoMoveToHaterAndAttack(() => {
             this.play('pantheon-move');
         });
         this.play('pantheon-move');
     }
-    attack(_hater: Actor, angle: number) {
+    public attack(_hater: Actor, angle: number) {
         if (this._coolDownRemaining == 0) {
             this.play('pantheon-attack');
-            const bullet = new Bullet(this.scene, this.x, this.y, ['pantheon', 'bullet.png'], this.bulletOptions);
+            const bullet = new Bullet(this.scene, this.x, this.y, ['pantheon', 'bullet.png'], this._bulletOptions);
             const bulletObjectOptions = {
                 angle,
                 x: this.x,
@@ -59,7 +61,7 @@ class Pantheon extends BaseMonster {
             }, this._coolDown);
         }
     }
-    async makeAnimations() {
+    private async _makeAnimations() {
         await GameHelper.loadSprite('multiatlas', 'pantheon', 'images/monster/pantheon/base.json', this.scene);
         this.scene.anims.create({
             key: 'pantheon-move',

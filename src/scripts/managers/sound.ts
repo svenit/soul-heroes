@@ -8,7 +8,7 @@ const sounds = {
 };
 
 class SoundManager {
-    static async play(name: string, scene: Scene, options = {}) {
+    static async play(name: string, scene: Scene, options: Phaser.Types.Sound.SoundConfig = {}) {
         if (sounds.hasOwnProperty(name)) {
             await GameHelper.loadSprite('audio', name, (sounds as any)[name], scene);
             const sould = scene.sound.add(name, options);

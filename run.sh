@@ -1,6 +1,6 @@
 #!/bin/bash
-dockerContainer=soul-heroes
-dockerImage=soul-heroes
+dockerContainer=solo-dungeon
+dockerImage=solo-dungeon
 dockerPort=8120
 localPort=8120
 
@@ -11,7 +11,7 @@ echo "Delete old image"
 docker rmi -f "${dockerImage}"
 
 echo "Build image"
-docker build -t soul-heroes .
+docker build -t ${dockerImage} .
 
 echo "Run container"
 docker container run --name ${dockerContainer} -p ${localPort}:${dockerPort} ${dockerImage}
