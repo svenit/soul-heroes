@@ -11,20 +11,50 @@ export interface PhysicBody extends Phaser.Physics.Arcade.Sprite {
 }
 
 export interface Stats {
-    strength: number;
-    intelligence: number;
+    /** @summary Sức mạnh vật lý */
+    strength: [number, number];
+
+    /** @summary Sức mạnh pháp thuật */
+    intelligence: [number, number];
+
+    /** @summary Sinh lực */
     hp: number;
+
+    /** @summary Ma lực */
     mp: number;
+
+    /** @summary Tốc độ di chuyển */
     speed: number;
+
+    /** @summary May mắn */
     luck: number;
+
+    /** @summary Tốc độ đánh */
     attackSpeed: number;
+
+    /** @summary Kháng sát thương vật lý */
     physicalResistance: number;
+
+    /** @summary Kháng sát thương pháp thuật */
     magicResistance: number;
+
+    /** @summary Nhanh nhẹn */
     agility: number;
-    attackRange: number;
+
+    /** @summary Tầm đánh */
+    autoAimRange: number;
+
+    /** @summary Chính xác */
     accuracy: number;
-    weaponMastery: number;
-    cooldownSpeed: number;
+
+    /** @summary Khéo néo */
+    dexterity: number;
+
+    /** @summary Tốc độ hồi chiêu % */
+    cooldownSpeed_: number;
+
+    /** @summary Sát thương chí mạng % */
+    criticalX_: number;
 }
 
 export interface OnAttacked {
@@ -40,4 +70,12 @@ export interface BaseActorStatus {
     canAttack: boolean;
 }
 
-export type CollierType = Phaser.GameObjects.GameObject | Phaser.GameObjects.GameObject[] | Phaser.GameObjects.Group | Phaser.GameObjects.Group[];
+export interface RealDamageOptions {
+    realDamage: number;
+}
+
+export type CollierType =
+    | Phaser.GameObjects.GameObject
+    | Phaser.GameObjects.GameObject[]
+    | Phaser.GameObjects.Group
+    | Phaser.GameObjects.Group[];

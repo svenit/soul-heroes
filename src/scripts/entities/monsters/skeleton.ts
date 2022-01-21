@@ -4,7 +4,7 @@ import { MonsterBulletOptions, MonsterStats } from '../../types/monster';
 import Bullet from '../bullet';
 import BaseMonster from '../monster';
 
-class ChaosKnight extends BaseMonster {
+class Skeleton extends BaseMonster {
     /* Private */
     private _stats: Partial<MonsterStats> = {
         hp: 1000,
@@ -50,7 +50,7 @@ class ChaosKnight extends BaseMonster {
         });
     }
     public _attack() {
-        this.on(Phaser.Animations.Events.ANIMATION_UPDATE, (object: Phaser.Animations.Animation, event: Phaser.Animations.AnimationFrame) => {
+        this.on(Phaser.Animations.Events.ANIMATION_UPDATE, async (object: Phaser.Animations.Animation, event: Phaser.Animations.AnimationFrame) => {
             if (event.isLast && object.key == 'chaos-knight-move' && this.status.canAttack) {
                 const bullet = new Bullet(this.scene, this.x, this.y, null, this._bulletOptions);
                 const bulletObjectOptions = {
@@ -74,4 +74,4 @@ class ChaosKnight extends BaseMonster {
     }
 }
 
-export default ChaosKnight;
+export default Skeleton;

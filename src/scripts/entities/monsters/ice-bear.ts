@@ -1,37 +1,42 @@
 import GameHelper from '../../helpers/game';
 import SoundManager from '../../managers/sound';
-import { Actor } from '../../types/actor';
-import { BaseBullet, BulletOptions } from '../../types/bullet';
+import { Actor, DamageType } from '../../types/actor';
+import { BaseBullet } from '../../types/bullet';
 import { CollierType, Scene } from '../../types/global';
-import { MonsterStats } from '../../types/monster';
+import { MonsterBulletOptions, MonsterStats } from '../../types/monster';
 import Bullet from '../bullet';
 import BaseMonster from '../monster';
 
 class IceBear extends BaseMonster {
     /* Private */
-    private _bulletOptions: Partial<BulletOptions> = {
+    private _stats: Partial<MonsterStats> = {
+        hp: 1000,
+        mp: 0,
+        strength: [60, 80],
+        intelligence: [60, 80],
+        speed: 0.5,
+        vision: 600,
+        scale: 2,
+        agility: 150,
+        accuracy: 100,
+        autoAimRange: 300,
+        movementRound: 2,
+        maxMovementRound: 2,
+        luck: 2,
+        criticalX_: 20,
+    };
+    private _bulletOptions: Partial<MonsterBulletOptions> = {
         damage: [60, 70],
         speed: 2.3,
         scale: 2,
         height: 15,
         width: 15,
         center: true,
-        attackRange: 900,
+        range: 900,
         rotation: 0.2,
         scaleIncre: 0.01,
         damageIcre: 1,
-        criticalChane: 31,
-    };
-    private _stats: Partial<MonsterStats> = {
-        hp: 1000,
-        mp: 0,
-        speed: 0.5,
-        vision: 600,
-        scale: 2,
-        agility: 150,
-        attackRange: 300,
-        movementRound: 2,
-        maxMovementRound: 2,
+        through: 0,
     };
     private _coolDownRemaining = 0;
     private _coolDown = 2000;
@@ -53,6 +58,9 @@ class IceBear extends BaseMonster {
             this.play('ice-bear-move');
         });
         this.play('ice-bear-move');
+    }
+    public getBasicDamageType(): DamageType {
+        return 'intelligence';
     }
     public attack(_hater: Actor, angle: number) {
         if (this._coolDownRemaining == 0 && this.status.alive) {
@@ -77,7 +85,13 @@ class IceBear extends BaseMonster {
                 x: this.x,
                 y: this.y,
             } as Phaser.GameObjects.Sprite;
-            bullet.fire(this, bulletObjectOptions, this.haters, (hater: Actor) => this._onAttackHater(hater), this._onBulletColliderOnGround);
+            bullet.fire(
+                this,
+                bulletObjectOptions,
+                this.haters,
+                (hater: Actor) => this._onAttackHater(hater),
+                this._onBulletColliderOnGround,
+            );
         }
     }
     private _onBulletColliderOnGround(bullet: CollierType & BaseBullet) {

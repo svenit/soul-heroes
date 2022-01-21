@@ -2,12 +2,12 @@ import Direction from '../config/direction';
 import GameConfig from '../config/game';
 import Groups from '../config/groups';
 import GameHelper from '../helpers/game';
-import { Actor } from '../types/actor';
+import { Actor, DamageType } from '../types/actor';
 import { OnAttacked, PhysicBody, Scene } from '../types/global';
 import { MonsterStats, MonsterStatuses } from '../types/monster';
 import Bar from './bar';
 
-class BaseMonster extends Phaser.Physics.Arcade.Sprite {
+class BaseMonster extends Phaser.Physics.Arcade.Sprite implements Actor {
     public stats: MonsterStats = {
         hp: 0,
         mp: 0,
@@ -18,15 +18,16 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite {
         agility: 0,
         vision: 0,
         scale: 1,
-        attackRange: 0,
+        autoAimRange: 0,
         movementRound: 2,
         maxMovementRound: 2,
-        strength: 0,
-        intelligence: 0,
+        strength: [0, 0],
+        intelligence: [0, 0],
         attackSpeed: 0,
         accuracy: 0,
-        weaponMastery: 0,
-        cooldownSpeed: 0,
+        dexterity: 0,
+        cooldownSpeed_: 0,
+        criticalX_: 0
     };
     public status: MonsterStatuses = {
         alive: true,
@@ -41,7 +42,8 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite {
     public followers: Phaser.GameObjects.GameObject[] = [];
     public haters: Phaser.GameObjects.GameObject[] = [];
     public haterTypes: string[] = [Groups.Player];
-    public closestHater: Actor;
+    public closestHater: Actor | null = null;
+    public moveAngle: number = 0;
 
     /* Private */
     private _gfx: Phaser.GameObjects.Graphics;
@@ -76,7 +78,9 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite {
                     this.body.setVelocity(0);
                     this.triggerFollowersMove();
                 }
-                this.haters = this.scene.children.list.filter((child: Phaser.GameObjects.GameObject) => this.haterTypes.includes(child.name));
+                this.haters = this.scene.children.list.filter((child: Phaser.GameObjects.GameObject) =>
+                    this.haterTypes.includes(child.name),
+                );
             },
             callbackScope: this,
             loop: true,
@@ -97,6 +101,7 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite {
                     }
                     this._gfx.clear();
                     if (injectCallback) injectCallback();
+                    this.closestHater = null;
                     this.followHaterAndAttack();
                 },
                 callbackScope: this,
@@ -120,7 +125,7 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite {
                 if (GameConfig.showMonterVisionRange) {
                     this._gfx.lineStyle(5, 0x5832a8).lineBetween(this.closestHater.x, this.closestHater.y, this.x, this.y);
                 }
-                if (this.stats.attackRange && this.stats.attackRange >= distance) {
+                if (this.stats.autoAimRange && this.stats.autoAimRange >= distance) {
                     this.moveByAI();
                     this.setFlipX(isMoveLeft);
                     // @ts-ignore
@@ -160,11 +165,26 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite {
         }
     }
     public changeDirection(angle: number, speed: number) {
+        this.moveAngle = angle;
         if (this.status.alive && this.status.canMove) {
             GameHelper.moveByAngle(this, angle, speed, false);
             this.setFlipX(this.body.velocity.x < 0);
             this.triggerFollowersMove();
         }
+    }
+    public getBasicDamageType(): DamageType {
+        return 'strength';
+    }
+    public getBasicDamage() {
+        const [min, max] = this.stats[this.getBasicDamageType()];
+        return {
+            min,
+            max,
+            avg: GameHelper.randomInRange(min, max),
+        };
+    }
+    public getDamageResistance(type: string) {
+        return this.stats[type];
     }
     public triggerFollowersMove() {
         if (this.status.alive) {
@@ -177,14 +197,8 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite {
     public onEnemyDie() {
         console.log('HELL');
     }
-    public onAttacked({ actor, damage, showText = true, criticalAttack = false }: OnAttacked) {
-        const { agility } = this.stats;
-        const randomDodgeChane = GameHelper.randomInRange(0, 100);
-        if (agility && agility >= randomDodgeChane + (actor.stats?.accuracy ?? 0)) {
-            return GameHelper.showFadeText(this.scene, this.x, this.y, 'Né', false, null);
-        }
+    public onAttacked({ actor, damage }: OnAttacked) {
         const isDied = this.hp && this.hp.decrease(damage);
-        if (showText) GameHelper.showFadeText(this.scene, this.x, this.y, damage.toString(), criticalAttack, null);
         this.setTint(0xff0000);
         this.scene.time.addEvent({
             delay: 80,

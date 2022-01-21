@@ -1,7 +1,7 @@
 import Direction from '../config/direction';
 import GameConfig from '../config/game';
 import { Actor } from '../types/actor';
-import { Scene } from '../types/global';
+import { RealDamageOptions, Scene } from '../types/global';
 
 class GameHelper {
     static loaded: string[] = [];
@@ -64,7 +64,9 @@ class GameHelper {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
     static rectsIntersect(xBox: Phaser.GameObjects.Sprite, yBox: Phaser.GameObjects.Sprite) {
-        return xBox.x + xBox.width > yBox.x && xBox.x < yBox.x + yBox.width && xBox.y + xBox.height > yBox.y && xBox.y < yBox.y + yBox.height;
+        return (
+            xBox.x + xBox.width > yBox.x && xBox.x < yBox.x + yBox.width && xBox.y + xBox.height > yBox.y && xBox.y < yBox.y + yBox.height
+        );
     }
     static getDistance(xBox: Phaser.GameObjects.Sprite, yBox: Phaser.GameObjects.Sprite) {
         const dx = xBox.x - yBox.x;
@@ -149,6 +151,67 @@ class GameHelper {
         return scene.anims.generateFrameNames(spriteKey, {
             outputArray: frames,
         });
+    }
+    static getChane(a: number, b: number) {
+        a = a == 0 ? 1 : a + 1;
+        b = b == 0 ? 1 : b + 1;
+        const max = Math.max(a, b);
+        const subChane = a - b;
+        if (subChane == 0) return false;
+        const chane = (subChane / max) * 100;
+        if (chane < 0) return false;
+        return chane <= this.randomInRange(0, 100);
+    }
+    static getValuePercent(percent: number, total: number) {
+        return (percent / 100) * total;
+    }
+    static getRealDamage(
+        scene: Scene,
+        actor: Actor,
+        target: Actor,
+        options: RealDamageOptions = {
+            realDamage: 0,
+        },
+    ) {
+        if (actor.status.alive && target.status.alive) {
+            const damageOpposite = {
+                strength: 'physicalResistance',
+                intelligence: 'magicResistance',
+            };
+            const actorStats = actor.stats;
+            const targetStats = target.stats;
+            const resistanceType = damageOpposite[actor.getBasicDamageType()] as 'physicalResistance' | 'magicResistance';
+
+            /* Actor */
+            const actorDamage = actor.getBasicDamage().avg + options.realDamage;
+
+            /* Target */
+            const targetResistance = target.getDamageResistance(resistanceType);
+
+            /* Né */
+            if (this.getChane(actorStats.accuracy, targetStats.agility)) {
+                this.showFadeText(scene, target.x, target.y, 'Né', false, null);
+                return 0;
+            }
+
+            /* Tính sát thương chí mạng */
+            let isCritical = false;
+            let criticalX = 1;
+            const maxCriticalX = 2;
+            if (this.getChane(actorStats.luck, targetStats.luck)) {
+                isCritical = true;
+                criticalX = maxCriticalX + this.getValuePercent(actorStats.criticalX_, maxCriticalX);
+            }
+
+            /* Tính sát thương */
+            let damage = GameHelper.convertToFloat(actorDamage * criticalX - targetResistance, 2);
+            damage = damage <= 0 ? 0 : damage;
+            this.showFadeText(scene, target.x, target.y, damage, isCritical, {
+                color: damage == 0 ? '#ccc' : '#ff0008',
+            });
+            return damage;
+        }
+        return 0;
     }
 }
 

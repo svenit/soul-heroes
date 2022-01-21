@@ -3,14 +3,14 @@ import GameConfig from '../config/game';
 import GearsStorage from '../config/gears';
 import Groups from '../config/groups';
 import GameHelper from '../helpers/game';
-import { Actor } from '../types/actor';
+import { Actor, DamageType } from '../types/actor';
 import { OnAttacked, PhysicBody, Scene, Stats } from '../types/global';
 import { GearOptions, PlayerStatuses } from '../types/player';
 import Bar from './bar';
 import Shadow from './shadow';
 import Weapon from './weapon';
 
-class Player extends Phaser.Physics.Arcade.Sprite {
+class Player extends Phaser.Physics.Arcade.Sprite implements Actor {
     public status: PlayerStatuses = {
         alive: true,
         canMove: true,
@@ -18,8 +18,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         canUseSkill: true,
     };
     public stats: Stats = {
-        strength: 0,
-        intelligence: 0,
+        strength: [0, 0],
+        intelligence: [0, 0],
         hp: 0,
         mp: 0,
         speed: 1,
@@ -28,10 +28,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         physicalResistance: 0,
         magicResistance: 0,
         agility: 0,
-        attackRange: 0,
+        autoAimRange: 0,
         accuracy: 0,
-        weaponMastery: 0,
-        cooldownSpeed: 0,
+        dexterity: 0,
+        cooldownSpeed_: 0,
+        criticalX_: 0,
     };
     public model = {
         offset: {
@@ -130,7 +131,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             callback: () => {
                 if (this.status.canMove) {
                     this.gearContainer &&
-                        this.gearContainer.setPosition(this.gearContainer.x, this._isGearDown ? this.gearContainer.y - 1 : this.gearContainer.y + 1);
+                        this.gearContainer.setPosition(
+                            this.gearContainer.x,
+                            this._isGearDown ? this.gearContainer.y - 1 : this.gearContainer.y + 1,
+                        );
                     this._isGearDown = !this._isGearDown;
                 }
             },
@@ -189,7 +193,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.autoAimEnemy();
             if (!this._footStepSound.isPlaying) this._footStepSound.play();
             /* Vẽ attack range */
-            if (GameConfig.showAutoAimRange) GameHelper.drawAutoAimRange(this.scene, this, this.stats.attackRange ?? 0);
+            if (GameConfig.showAutoAimRange) GameHelper.drawAutoAimRange(this.scene, this, this.stats.autoAimRange ?? 0);
         }
     }
     /**
@@ -229,9 +233,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                 const closestEnemy = this.scene.physics.closest(this, enemiesLive) as PhysicBody;
                 if (closestEnemy && this.weapon) {
                     const { angle, distance } = GameHelper.getDistance(this, closestEnemy);
-                    if (this.stats.attackRange && this.stats.attackRange >= distance) {
+                    if (this.stats.autoAimRange && this.stats.autoAimRange >= distance) {
                         /* Hiển thị tool line đến đối tương gần nhất */
-                        if (GameConfig.showAimLine) this._gfx.lineStyle(2, 0xff3300).lineBetween(closestEnemy.x, closestEnemy.y, this.x, this.y);
+                        if (GameConfig.showAimLine) {
+                            this._gfx.lineStyle(2, 0xff3300).lineBetween(closestEnemy.x, closestEnemy.y, this.x, this.y);
+                        }
                         /* Auto aim vào đối thủ */
                         this.angle = angle;
                         this.weapon.angle = angle;
@@ -292,6 +298,20 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             loop: true,
         });
     }
+    public getBasicDamageType(): DamageType {
+        return 'strength';
+    }
+    public getBasicDamage() {
+        const [min, max] = this.stats[this.getBasicDamageType()];
+        return {
+            min,
+            max,
+            avg: GameHelper.randomInRange(min, max),
+        };
+    }
+    public getDamageResistance(type: string) {
+        return this.stats[type];
+    }
     /**
      * @summary Reset state của actor và các follower
      */
@@ -312,14 +332,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
      * @summary Khi actor bị tấn công và nhận damage, nếu actor chết gọi callback onEnemyDie của người ra đòn
      * @param {number} damage
      */
-    public onAttacked({ actor, damage, showText = true, criticalAttack = false }: OnAttacked) {
+    public onAttacked({ actor, damage }: OnAttacked) {
         const isDied = this.hp && this.hp.decrease(damage);
-        if (showText) {
-            let textOption: Pick<Phaser.GameObjects.TextStyle, 'color'> = {
-                color: '#ff0008',
-            };
-            GameHelper.showFadeText(this.scene, this.x, this.y, damage.toString(), criticalAttack, textOption);
-        }
         this.gearContainer && this.gearContainer.getAll('body').forEach((gear: any) => gear.setTint(0xff0000));
         this.scene.time.addEvent({
             delay: 80,

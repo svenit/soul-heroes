@@ -56,7 +56,7 @@ class LoginScene extends BaseScene {
             fontFamily: 'Roboto',
             color: '#fff',
             stroke: '#000',
-            strokeThickness: 1
+            strokeThickness: 1,
         });
         this._loginTextAnimation = this.tweens.add({
             targets: this._loginText,

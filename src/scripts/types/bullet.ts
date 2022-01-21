@@ -1,23 +1,22 @@
+import { Actor } from './actor';
 import { PhysicBody } from './global';
 
 export interface BaseBullet extends PhysicBody {
-    attacked: PhysicBody;
+    attacked: Actor[];
     timer: Phaser.Time.TimerEvent;
     collidesTimes?: number;
 }
 
 export interface BulletOptions {
-    damage: [number, number];
     speed: number;
-    attackRange: number;
+    range: number;
     width: number;
     height: number;
     scale: number;
     rotation: number;
     center: boolean;
     scaleIncre: number;
-    damageIcre: number;
-    criticalChane: number;
     criticalX: number;
     deflection: number;
+    through: number;
 }

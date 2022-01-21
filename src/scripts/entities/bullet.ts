@@ -2,19 +2,20 @@ import Direction from '../config/direction';
 import Groups from '../config/groups';
 import GameHelper from '../helpers/game';
 import { Actor } from '../types/actor';
-import { BulletOptions } from '../types/bullet';
+import { BaseBullet, BulletOptions } from '../types/bullet';
 import { BaseActorStatus, CollierType, Scene } from '../types/global';
+import { MonsterBulletOptions } from '../types/monster';
 
-class Bullet extends Phaser.Physics.Arcade.Sprite {
+class Bullet extends Phaser.Physics.Arcade.Sprite implements BaseBullet {
     public status: BaseActorStatus = {
         alive: true,
         canMove: true,
         canAttack: true,
     };
-    public options: BulletOptions = {
+    public options: BulletOptions & MonsterBulletOptions = {
         damage: [1, 1],
         speed: 1,
-        attackRange: 1,
+        range: 1,
         width: 1,
         height: 1,
         scale: 1,
@@ -22,20 +23,22 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
         center: false,
         scaleIncre: 0,
         damageIcre: 0,
-        criticalChane: 0,
         criticalX: 2,
         deflection: 0,
+        through: 0,
     };
+    public bulletAnimation: string = '';
+    public attacked: Actor[] = [];
 
     /* Private */
     private _timer: Phaser.Time.TimerEvent;
+    private _passedThrough: number = 0;
 
     constructor(scene: Scene, x: number, y: number, texture: string | string[] | null, options: Partial<BulletOptions> = {}) {
         // @ts-ignore
         super(scene, x, y);
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        if (!texture) this.setVisible(false);
         if (texture) {
             const [altas, name] = texture;
             Array.isArray(texture) ? this.setTexture(altas, name) : this.setTexture(name);
@@ -44,6 +47,14 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
         this.name = Groups.Bullet;
         this.options = Object.assign(this.options, options);
     }
+    timer: Phaser.Time.TimerEvent;
+    collidesTimes?: number | undefined;
+    alive: boolean;
+    onFollowedMove?: ((actor: Actor) => void) | undefined;
+    resetState?: (() => void) | undefined;
+    public makeBulletAnimation(callback: CallableFunction) {
+        callback(this);
+    }
     public fire(
         actor: Actor,
         weapon: Phaser.GameObjects.Sprite,
@@ -51,20 +62,15 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
         callbackOnAttacked?: CallableFunction | null,
         callbackOnColliderGround?: CallableFunction | null,
     ) {
-        let { attackRange, width, height, speed, scale, rotation, damage, center, scaleIncre, damageIcre, criticalChane, criticalX, deflection } = this.options;
+        this.bulletAnimation && this.play(this.bulletAnimation);
+        let { range, width, height, speed, scale, rotation, damage, center, scaleIncre, damageIcre, deflection, through } = this.options;
         let criticalAttack = false;
-        const { weaponMastery } = actor.stats;
-        /* Sát thương gây ra */
+        const { dexterity } = actor.stats;
+        /* Sát thương gây ra từ đạn */
         const [minDamage, maxDamage] = damage;
         let realDamage = GameHelper.randomInRange(minDamage, maxDamage);
-        /* Tỉ lệ chí mạng */
-        const randomCriticalChane = GameHelper.randomInRange(0, 100);
-        if (randomCriticalChane <= criticalChane) {
-            realDamage *= criticalX;
-            criticalAttack = true;
-        }
         /* Độ lệch đạn */
-        deflection = deflection - weaponMastery < 0 ? 0 : deflection - weaponMastery;
+        deflection = deflection - dexterity < 0 ? 0 : deflection - dexterity;
         const randomDeflection = GameHelper.randomInRange(-deflection, deflection);
         /* Chỉnh physic cho đạn */
         const freezeWeapon = Object.assign({}, weapon);
@@ -85,18 +91,28 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
         /* Di chuyển đạn theo hướng của actor */
         GameHelper.moveByAngle(this, weapon.angle + randomDeflection, speed);
         // @ts-ignore
-        this.scene.physics.add.overlap(this, targets, (bullet: BaseBullet, target: Actor) => {
+        this.scene.physics.add.overlap(this, targets, (bullet: Bullet, target: Actor) => {
             /* Nếu đã attack đối tượng trước đó thì không attack lại nữa */
-            if (bullet.attacked != target) {
-                if (target.status.alive) {
+            if (!bullet.attacked.includes(target)) {
+                const damage = GameHelper.getRealDamage(this.scene, actor, target, {
+                    realDamage,
+                });
+                /* Gọi hàm callback khi attack thành công */
+                target.onAttacked && target.onAttacked({ actor, damage, criticalAttack });
+                callbackOnAttacked && callbackOnAttacked(target);
+
+                bullet.attacked.push(target);
+                /* Check số lượt xuyên táo của đạn */
+                this._passedThrough++;
+                if (this._passedThrough >= through) {
                     bullet.destroy();
-                    if (this._timer) this._timer.remove();
+                    this._timer && this._timer.remove();
+                    return;
                 }
-                realDamage = GameHelper.convertToFloat(realDamage, 2);
-                target.onAttacked && target.onAttacked({ actor, damage: realDamage, criticalAttack });
+                setTimeout(() => {
+                    bullet.attacked = bullet.attacked.filter((attacked) => attacked != target);
+                }, 500);
             }
-            callbackOnAttacked && callbackOnAttacked(target);
-            bullet.attacked = target;
         });
         /* Nếu khoảng cách viên đạn vượt quá attackRange thì destroy */
         this._timer = this.scene.time.addEvent({
@@ -106,7 +122,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
                 this.rotation += rotation;
                 this.scale += scaleIncre;
                 realDamage += damageIcre;
-                if (distance > attackRange) {
+                if (distance > range) {
                     this.destroy();
                     this._timer && this._timer.remove();
                 }

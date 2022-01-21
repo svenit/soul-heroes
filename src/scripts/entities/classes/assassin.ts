@@ -1,3 +1,4 @@
+import { DamageType } from '../../types/actor';
 import { Scene } from '../../types/global';
 import { Classess, GearOptions } from '../../types/player';
 import Player from '../player';
@@ -18,11 +19,14 @@ class Assassin extends Player {
         this.initGear(this._gearsOptions);
         this.initStats({
             hp: 65000,
+            strength: [10, 20],
             speed: 2.5,
-            attackRange: 300,
-            accuracy: 100,
-            weaponMastery: 0,
+            autoAimRange: 300,
+            physicalResistance: 500,
         });
+    }
+    public getBasicDamageType(): DamageType {
+        return 'strength';
     }
 }
 

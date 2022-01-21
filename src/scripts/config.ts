@@ -1,12 +1,13 @@
 import Phaser from 'phaser';
 import GameConfig from './config/game';
 
-export default {
+const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
     parent: 'game',
     render: {
         antialiasGL: false,
         pixelArt: true,
+        powerPreference: "high-performance",
     },
     roundPixels: true,
     physics: {
@@ -22,11 +23,16 @@ export default {
     scale: {
         width: window.innerWidth,
         height: window.innerHeight,
-        mode: Phaser.Scale.CENTER_BOTH,
+        mode: Phaser.Scale.RESIZE,
     },
     disableContextMenu: true,
     fps: {
+        target: 240,
         forceSetTimeOut: true,
     },
     banner: false,
 };
+
+console.warn = () => null;
+
+export default config;

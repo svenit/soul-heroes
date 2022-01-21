@@ -1,12 +1,10 @@
 import { Scene } from '../types/global';
 
-/* @vite-ignore */
+const monsters = ['fire-slime', 'pantheon', 'boomer', 'ice-bear', 'chaos-knight', 'skeleton'];
+
 const loadMonster = (path: string) => () => import(`../entities/monsters/${path}`).then((m) => m.default) as any;
 
-const monsters = ['fire-slime', 'pantheon', 'boomer', 'ice-bear', 'chaos-knight'];
-
 const monstersMap = new Map(monsters.map((scene) => [scene, loadMonster(scene)]));
-
 class MonsterManager {
     static prefix = 'monster_';
     /**
@@ -16,7 +14,6 @@ class MonsterManager {
      * @param {Callback Function} callback
      */
     static spawn(object: Phaser.Tilemaps.ObjectLayer, scene: Scene, callback?: CallableFunction) {
-        console.log(object.name);
         if (object.name.includes(this.prefix)) {
             const monsterName = object.name.replace(/monster_/gim, '');
             if (!monstersMap.has(monsterName)) {

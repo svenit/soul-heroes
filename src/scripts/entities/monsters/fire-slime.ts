@@ -1,14 +1,11 @@
 import GameHelper from '../../helpers/game';
-import { BulletOptions } from '../../types/bullet';
+import { Actor, DamageType } from '../../types/actor';
 import { Scene } from '../../types/global';
-import { MonsterStats } from '../../types/monster';
+import { MonsterBulletOptions, MonsterStats } from '../../types/monster';
 import BaseMonster from '../monster';
 
 class FireSlime extends BaseMonster {
     /* Private */
-    private _bulletOptions: Pick<BulletOptions, 'damage'> = {
-        damage: [20, 20],
-    };
     private _stats: Partial<MonsterStats> = {
         hp: 1000,
         mp: 0,
@@ -17,7 +14,10 @@ class FireSlime extends BaseMonster {
         scale: 1.5,
         movementRound: 2,
         maxMovementRound: 2,
-        attackRange: 0,
+        autoAimRange: 0,
+    };
+    private _bulletOptions: Pick<MonsterBulletOptions, 'damage'> = {
+        damage: [20, 20],
     };
     private _fires: { [id: string]: Phaser.Physics.Arcade.Sprite } = {};
 
@@ -35,6 +35,9 @@ class FireSlime extends BaseMonster {
         this._attack();
         this.play('fire-slime-move');
     }
+    public getBasicDamageType(): DamageType {
+        return 'intelligence';
+    }
     private async _makeAnimations() {
         await GameHelper.loadSprite('multiatlas', 'fire-slime', 'images/monster/fire-slime/base.json', this.scene);
         this.scene.anims.create({
@@ -51,25 +54,31 @@ class FireSlime extends BaseMonster {
         });
     }
     private _attack() {
-        this.on(Phaser.Animations.Events.ANIMATION_UPDATE, (object: Phaser.Animations.Animation, event: Phaser.Animations.AnimationFrame) => {
-            if (event.isLast && object.key == 'fire-slime-move') {
-                const id = GameHelper.uuid();
-                this._fires[id] = this.scene.physics.add.sprite(this.x, this.y, '');
-                this._fires[id].setBodySize(22, 22);
-                this._fires[id].setOffset(2, 12);
-                this._fires[id].setScale(1.5);
-                this._fires[id].setImmovable();
-                this._fires[id].play('fire-slime-attack');
-                this._fires[id].on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => this._fires[id].destroy());
-                this.scene.physics.add.collider(this._fires[id], this.haters, (fire, hater) => {
-                    fire.destroy();
-                    const [min, max] = this._bulletOptions.damage;
-                    const damage = GameHelper.randomInRange(min, max);
-                    // @ts-ignore
-                    hater.onAttacked && hater.onAttacked({ actor: fire, damage });
-                });
-            }
-        });
+        this.on(
+            Phaser.Animations.Events.ANIMATION_UPDATE,
+            (object: Phaser.Animations.Animation, event: Phaser.Animations.AnimationFrame) => {
+                if (event.isLast && object.key == 'fire-slime-move') {
+                    const id = GameHelper.uuid();
+                    this._fires[id] = this.scene.physics.add.sprite(this.x, this.y, '');
+                    this._fires[id].setBodySize(22, 22);
+                    this._fires[id].setOffset(2, 12);
+                    this._fires[id].setScale(1.5);
+                    this._fires[id].setImmovable();
+                    this._fires[id].play('fire-slime-attack');
+                    this._fires[id].on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => this._fires[id].destroy());
+                    this.scene.physics.add.collider(this._fires[id], this.haters, (fire, hater) => {
+                        fire.destroy();
+                        const [min, max] = this._bulletOptions.damage;
+                        const realDamage = GameHelper.randomInRange(min, max);
+                        const damage = GameHelper.getRealDamage(this.scene, this as Actor, hater as Actor, {
+                            realDamage,
+                        });
+                        // @ts-ignore
+                        hater.onAttacked && hater.onAttacked({ actor: fire, damage });
+                    });
+                }
+            },
+        );
     }
 }
 

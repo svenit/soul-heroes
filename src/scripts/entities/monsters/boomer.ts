@@ -1,33 +1,32 @@
 import GameHelper from '../../helpers/game';
 import { Actor } from '../../types/actor';
-import { BaseBullet, BulletOptions } from '../../types/bullet';
+import { BaseBullet } from '../../types/bullet';
 import { CollierType, Scene } from '../../types/global';
-import { MonsterStats } from '../../types/monster';
+import { MonsterBulletOptions, MonsterStats } from '../../types/monster';
 import Bullet from '../bullet';
 import BaseMonster from '../monster';
 
 class Boomer extends BaseMonster {
     /* Private */
-    private _bulletOptions: Partial<BulletOptions> = {
-        damage: [10, 50],
-        speed: 2.3,
-        scale: 1.5,
-        height: 20,
-        width: 20,
-        center: true,
-        attackRange: 900,
-        rotation: 0.1,
-        criticalChane: 40,
-    };
     private _stats: Partial<MonsterStats> = {
         hp: 1000,
         mp: 0,
         speed: 0.5,
         vision: 300,
         scale: 1.5,
-        attackRange: 300,
+        autoAimRange: 300,
         movementRound: 2,
         maxMovementRound: 2,
+    };
+    private _bulletOptions: Partial<MonsterBulletOptions> = {
+        damage: [10, 50],
+        speed: 2.3,
+        scale: 1.5,
+        height: 20,
+        width: 20,
+        center: true,
+        range: 900,
+        rotation: 0.1,
     };
     private _coolDownRemaining = 0;
     private _coolDown = 2000;
