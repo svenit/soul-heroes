@@ -1,7 +1,7 @@
 import GameHelper from '../../helpers/game';
 import { Actor } from '../../types/actor';
 import { BaseBullet } from '../../types/bullet';
-import { CollierType, Scene } from '../../types/global';
+import { CollierType, OnAttackEnemy, Scene } from '../../types/global';
 import { MonsterBulletOptions, MonsterStats } from '../../types/monster';
 import Bullet from '../bullet';
 import BaseMonster from '../monster';
@@ -52,12 +52,8 @@ class Boomer extends BaseMonster {
             this.play('boomer-attack');
             const bullet = new Bullet(this.scene, this.x, this.y, ['boomer', 'bullet.png'], this._bulletOptions);
             const bulletObjectOptions = { angle, x: this.x, y: this.y } as Phaser.GameObjects.Sprite;
-            bullet.fire(
-                this,
-                bulletObjectOptions,
-                this.haters,
-                (hater: Actor) => this._onAttackHater(hater),
-                (bullet: CollierType & BaseBullet, _ground: CollierType) => this._onBulletColliderOnGround(bullet),
+            bullet.fire(this, bulletObjectOptions, this.haters, (bullet: CollierType & BaseBullet, _ground: CollierType) =>
+                this._onBulletColliderOnGround(bullet),
             );
             this._coolDownRemaining = this._coolDown;
             setTimeout(() => {
@@ -73,13 +69,16 @@ class Boomer extends BaseMonster {
         }
         bullet.collidesTimes++;
         if (bullet.collidesTimes == 3) {
-            this._onAttackHater(bullet);
+            this._onAttackEnemy(bullet);
             bullet.destroy();
         }
     }
-    private _onAttackHater(hater: Actor | (CollierType & BaseBullet)) {
+    public onAttackEnemy({ target }: OnAttackEnemy) {
+        this._onAttackEnemy(target);
+    }
+    private _onAttackEnemy(target: Phaser.GameObjects.Sprite) {
         if (this.status.alive) {
-            const boom = this.scene.add.sprite(hater.x, hater.y, '');
+            const boom = this.scene.add.sprite(target.x, target.y, '');
             boom.setScale(1.3);
             boom.play('boomer-bang');
             boom.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => boom.destroy());

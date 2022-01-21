@@ -1,7 +1,7 @@
 import Direction from '../config/direction';
 import GameConfig from '../config/game';
 import { Actor } from '../types/actor';
-import { RealDamageOptions, Scene } from '../types/global';
+import { GetRealDamageState, RealDamageOptions, Scene } from '../types/global';
 
 class GameHelper {
     static loaded: string[] = [];
@@ -165,14 +165,14 @@ class GameHelper {
     static getValuePercent(percent: number, total: number) {
         return (percent / 100) * total;
     }
-    static getRealDamage(
-        scene: Scene,
-        actor: Actor,
-        target: Actor,
-        options: RealDamageOptions = {
-            realDamage: 0,
-        },
-    ) {
+    static getRealDamage(scene: Scene, actor: Actor, target: Actor, options: RealDamageOptions): GetRealDamageState {
+        const initalState: GetRealDamageState = {
+            miss: false,
+            damage: 0,
+            isCritical: false,
+            criticalX: 1,
+            maxCriticalX: 2,
+        };
         if (actor.status.alive && target.status.alive) {
             const damageOpposite = {
                 strength: 'physicalResistance',
@@ -181,37 +181,37 @@ class GameHelper {
             const actorStats = actor.stats;
             const targetStats = target.stats;
             const resistanceType = damageOpposite[actor.getBasicDamageType()] as 'physicalResistance' | 'magicResistance';
-
-            /* Actor */
+            /* Lấy ra sát thương của người đánh */
             const actorDamage = actor.getBasicDamage().avg + options.realDamage;
-
-            /* Target */
+            /* Lấy ra kháng công/kháng phép của người bị đánh */
             const targetResistance = target.getDamageResistance(resistanceType);
-
             /* Né */
             if (this.getChane(actorStats.accuracy, targetStats.agility)) {
-                this.showFadeText(scene, target.x, target.y, 'Né', false, null);
-                return 0;
+                initalState.miss = true;
             }
-
-            /* Tính sát thương chí mạng */
-            let isCritical = false;
-            let criticalX = 1;
-            const maxCriticalX = 2;
+            /* Chí mạng */
             if (this.getChane(actorStats.luck, targetStats.luck)) {
-                isCritical = true;
-                criticalX = maxCriticalX + this.getValuePercent(actorStats.criticalX_, maxCriticalX);
+                initalState.isCritical = true;
+                initalState.criticalX = initalState.maxCriticalX + this.getValuePercent(actorStats.criticalX_, initalState.maxCriticalX);
             }
-
             /* Tính sát thương */
-            let damage = GameHelper.convertToFloat(actorDamage * criticalX - targetResistance, 2);
-            damage = damage <= 0 ? 0 : damage;
-            this.showFadeText(scene, target.x, target.y, damage, isCritical, {
-                color: damage == 0 ? '#ccc' : '#ff0008',
-            });
-            return damage;
+            initalState.damage = GameHelper.convertToFloat(actorDamage * initalState.criticalX - targetResistance, 2);
+            initalState.damage = initalState.damage <= 0 ? 0 : initalState.damage;
+            /* Callback */
+            if (actor.onAttackEnemy) {
+                actor.onAttackEnemy({
+                    target,
+                    state: initalState,
+                });
+            }
+            if (target.onAttacked) {
+                target.onAttacked({
+                    actor,
+                    state: initalState,
+                });
+            }
         }
-        return 0;
+        return initalState;
     }
 }
 

@@ -3,7 +3,7 @@ import GameConfig from '../config/game';
 import Groups from '../config/groups';
 import GameHelper from '../helpers/game';
 import { Actor, DamageType } from '../types/actor';
-import { OnAttacked, PhysicBody, Scene } from '../types/global';
+import { OnAttacked, OnAttackEnemy, PhysicBody, Scene } from '../types/global';
 import { MonsterStats, MonsterStatuses } from '../types/monster';
 import Bar from './bar';
 
@@ -27,7 +27,7 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite implements Actor {
         accuracy: 0,
         dexterity: 0,
         cooldownSpeed_: 0,
-        criticalX_: 0
+        criticalX_: 0,
     };
     public status: MonsterStatuses = {
         alive: true,
@@ -194,11 +194,8 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite implements Actor {
     public addColliders(objects: PhysicBody[], callback: ArcadePhysicsCallback) {
         this.scene.physics.add.collider(this, objects, callback);
     }
-    public onEnemyDie() {
-        console.log('HELL');
-    }
-    public onAttacked({ actor, damage }: OnAttacked) {
-        const isDied = this.hp && this.hp.decrease(damage);
+    public onAttacked({ actor, state }: OnAttacked) {
+        const isDied = this.hp && this.hp.decrease(state.damage);
         this.setTint(0xff0000);
         this.scene.time.addEvent({
             delay: 80,

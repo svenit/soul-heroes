@@ -332,8 +332,8 @@ class Player extends Phaser.Physics.Arcade.Sprite implements Actor {
      * @summary Khi actor bị tấn công và nhận damage, nếu actor chết gọi callback onEnemyDie của người ra đòn
      * @param {number} damage
      */
-    public onAttacked({ actor, damage }: OnAttacked) {
-        const isDied = this.hp && this.hp.decrease(damage);
+    public onAttacked({ actor, state }: OnAttacked) {
+        const isDied = this.hp && this.hp.decrease(state.damage);
         this.gearContainer && this.gearContainer.getAll('body').forEach((gear: any) => gear.setTint(0xff0000));
         this.scene.time.addEvent({
             delay: 80,

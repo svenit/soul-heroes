@@ -2,7 +2,7 @@ import GameHelper from '../../helpers/game';
 import SoundManager from '../../managers/sound';
 import { Actor, DamageType } from '../../types/actor';
 import { BaseBullet } from '../../types/bullet';
-import { CollierType, Scene } from '../../types/global';
+import { CollierType, OnAttackEnemy, Scene } from '../../types/global';
 import { MonsterBulletOptions, MonsterStats } from '../../types/monster';
 import Bullet from '../bullet';
 import BaseMonster from '../monster';
@@ -85,13 +85,7 @@ class IceBear extends BaseMonster {
                 x: this.x,
                 y: this.y,
             } as Phaser.GameObjects.Sprite;
-            bullet.fire(
-                this,
-                bulletObjectOptions,
-                this.haters,
-                (hater: Actor) => this._onAttackHater(hater),
-                this._onBulletColliderOnGround,
-            );
+            bullet.fire(this, bulletObjectOptions, this.haters, this._onBulletColliderOnGround);
         }
     }
     private _onBulletColliderOnGround(bullet: CollierType & BaseBullet) {
@@ -105,26 +99,26 @@ class IceBear extends BaseMonster {
             bullet.destroy();
         }
     }
-    private _onAttackHater(hater: Actor) {
+    public onAttackEnemy({ target }: OnAttackEnemy) {
         if (this.status.alive) {
             const randomFreezeChane = GameHelper.randomInRange(0, 100);
             /* 30% làm đóng băng hater */
             if (randomFreezeChane <= 30) {
                 if (this._freezeAnimation) this._freezeAnimation.destroy();
-                hater.status.canMove = false;
-                hater.status.canAttack = false;
+                target.status.canMove = false;
+                target.status.canAttack = false;
                 SoundManager.play('ice', this.scene, {
                     volume: 0.1,
                 });
-                this._freezeAnimation = this.scene.add.sprite(hater.x, hater.y, '');
+                this._freezeAnimation = this.scene.add.sprite(target.x, target.y, '');
                 this._freezeAnimation.setScale(1.7).setDepth(5).setOrigin(0.5, 0.5);
                 this._freezeAnimation.play('freeze-effect');
                 this._freezeHaterTimer = this.scene.time.addEvent({
                     delay: 1500,
                     callback: () => {
+                        target.status.canMove = true;
+                        target.status.canAttack = true;
                         this._freezeAnimation && this._freezeAnimation.destroy();
-                        hater.status.canMove = true;
-                        hater.status.canAttack = true;
                         this._freezeHaterTimer && this._freezeHaterTimer.remove();
                     },
                     callbackScope: this,

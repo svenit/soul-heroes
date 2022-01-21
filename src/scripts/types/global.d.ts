@@ -50,18 +50,21 @@ export interface Stats {
     /** @summary Khéo néo */
     dexterity: number;
 
-    /** @summary Tốc độ hồi chiêu % */
+    /** @summary Giảm tốc độ hồi chiêu % */
     cooldownSpeed_: number;
 
-    /** @summary Sát thương chí mạng % */
+    /** @summary Thêm sát thương chí mạng % */
     criticalX_: number;
 }
 
 export interface OnAttacked {
     actor: Actor;
-    damage: number;
-    criticalAttack?: boolean;
-    showText?: boolean;
+    state: GetRealDamageState;
+}
+
+export interface OnAttackEnemy {
+    target: Actor;
+    state: GetRealDamageState;
 }
 
 export interface BaseActorStatus {
@@ -72,6 +75,15 @@ export interface BaseActorStatus {
 
 export interface RealDamageOptions {
     realDamage: number;
+}
+
+export interface GetRealDamageState {
+    debugId?: string;
+    miss: boolean;
+    damage: number;
+    isCritical: boolean;
+    criticalX: number;
+    maxCriticalX: number;
 }
 
 export type CollierType =

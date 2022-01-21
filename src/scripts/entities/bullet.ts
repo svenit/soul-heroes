@@ -59,7 +59,6 @@ class Bullet extends Phaser.Physics.Arcade.Sprite implements BaseBullet {
         actor: Actor,
         weapon: Phaser.GameObjects.Sprite,
         targets: Phaser.GameObjects.GameObject[] = [],
-        callbackOnAttacked?: CallableFunction | null,
         callbackOnColliderGround?: CallableFunction | null,
     ) {
         this.bulletAnimation && this.play(this.bulletAnimation);
@@ -94,13 +93,9 @@ class Bullet extends Phaser.Physics.Arcade.Sprite implements BaseBullet {
         this.scene.physics.add.overlap(this, targets, (bullet: Bullet, target: Actor) => {
             /* Nếu đã attack đối tượng trước đó thì không attack lại nữa */
             if (!bullet.attacked.includes(target)) {
-                const damage = GameHelper.getRealDamage(this.scene, actor, target, {
+                GameHelper.getRealDamage(this.scene, actor, target, {
                     realDamage,
                 });
-                /* Gọi hàm callback khi attack thành công */
-                target.onAttacked && target.onAttacked({ actor, damage, criticalAttack });
-                callbackOnAttacked && callbackOnAttacked(target);
-
                 bullet.attacked.push(target);
                 /* Check số lượt xuyên táo của đạn */
                 this._passedThrough++;

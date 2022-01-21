@@ -1,4 +1,4 @@
-import { BaseActorStatus, OnAttacked, Stats } from './global';
+import { BaseActorStatus, OnAttacked, OnAttackEnemy, Stats } from './global';
 
 export type DamageType = 'strength' | 'intelligence';
 export interface Actor extends Phaser.GameObjects.Sprite {
@@ -7,7 +7,8 @@ export interface Actor extends Phaser.GameObjects.Sprite {
     stats: Stats;
     status: BaseActorStatus;
     onEnemyDie?: () => void;
-    onAttacked?: ({ actor, damage, criticalAttack }: OnAttacked) => void;
+    onAttacked?: ({ actor, state }: OnAttacked) => void;
+    onAttackEnemy?: ({ target, state }: OnAttackEnemy) => void;
     getBasicDamage: () => {
         min: number;
         max: number;

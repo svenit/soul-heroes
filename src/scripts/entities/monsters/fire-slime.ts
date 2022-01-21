@@ -1,6 +1,6 @@
 import GameHelper from '../../helpers/game';
 import { Actor, DamageType } from '../../types/actor';
-import { Scene } from '../../types/global';
+import { GetRealDamageState, Scene } from '../../types/global';
 import { MonsterBulletOptions, MonsterStats } from '../../types/monster';
 import BaseMonster from '../monster';
 
@@ -70,11 +70,11 @@ class FireSlime extends BaseMonster {
                         fire.destroy();
                         const [min, max] = this._bulletOptions.damage;
                         const realDamage = GameHelper.randomInRange(min, max);
-                        const damage = GameHelper.getRealDamage(this.scene, this as Actor, hater as Actor, {
+                        const initState: GetRealDamageState = GameHelper.getRealDamage(this.scene, this as Actor, hater as Actor, {
                             realDamage,
                         });
                         // @ts-ignore
-                        hater.onAttacked && hater.onAttacked({ actor: fire, damage });
+                        hater.onAttacked && hater.onAttacked({ actor: fire, state: initState });
                     });
                 }
             },
