@@ -1,6 +1,7 @@
 import SceneManager from '../managers/scene';
 import BaseScene from './base';
 import packageJson from '../../../package.json';
+import Modal from '../ui/modal';
 
 class LoginScene extends BaseScene {
     /* Private */
@@ -21,6 +22,26 @@ class LoginScene extends BaseScene {
         this.handlePreload(this.load);
     }
     public create() {
+        (new Modal(this, {
+            title: 'THÔNG BÁO',
+            content: [
+                {
+                    tag: 'p',
+                    content: "[ 29/01/2022 - v1.0.5 ]",
+                    classes: "mb-1",
+                    children: [
+                        {
+                            tag: 'li',
+                            content: 'Cập nhật bản đồ sự kiện mới'
+                        },
+                        {
+                            tag: 'li',
+                            content: 'Cập nhật sự kiện Tết 2022'
+                        },
+                    ]
+                },
+            ]
+        })).open();
         this._backgroundAudio = this.sound.add('background-login-audio');
         this._backgroundAudio.play({
             loop: true,

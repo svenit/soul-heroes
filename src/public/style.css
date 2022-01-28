@@ -42,8 +42,6 @@ canvas {
 
 .dimmed-bg {
     background: rgb(0, 0, 0, 0.3);
-    top: 5px;
-    position: relative;
     z-index: 999;
 }
 
@@ -56,9 +54,11 @@ canvas {
     width: 60%;
     height: 80%;
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
 }
 
 .basic-modal-close {

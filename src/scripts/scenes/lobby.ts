@@ -66,6 +66,7 @@ class LobbyScene extends BaseScene {
         this.character.useWeapon(this._weapon);
         this.character.bindCollider([this._ground]);
         this.cameras.main.setBounds(0, 0, this._ground.width, this._ground.height);
+        this.cameras.main.setZoom(1);
         this.cameras.main.startFollow(this.character, true);
         this._joystickHandler = new JoystickHandler();
         // @ts-ignore

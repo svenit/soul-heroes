@@ -20,7 +20,7 @@ class Assassin extends Player {
         this.initStats({
             hp: 65000,
             strength: [100, 2000],
-            speed: 2.5,
+            speed: 2,
             autoAimRange: 300,
             physicalResistance: 500,
         });

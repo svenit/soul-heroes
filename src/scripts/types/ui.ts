@@ -1,13 +1,16 @@
-export interface ModalContentInterface {
+export interface HTMLDOMInterface {
     tag?: string;
     content?: string;
     style?: string;
-    class?: string;
-    children?: ModalContentInterface[];
+    classes?: string;
+    attributes?: {
+        [key: string]: string
+    };
+    children?: HTMLDOMInterface[];
 }
 
 export interface ModalInterface {
     title?: string;
-    content?: ModalContentInterface[];
+    content?: HTMLDOMInterface[];
     onClose?: () => void;
 }
