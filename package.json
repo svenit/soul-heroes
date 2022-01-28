@@ -9,7 +9,8 @@
     "bundle": "npm run build",
     "serve-window": "SET PORT=8120 && serve dist",
     "serve": "serve dist -p 8120",
-    "android": "npx cap run android"
+    "android": "npx cap run android",
+    "build-android": "npm run build && npm run android"
   },
   "engines": {
     "node": ">=12"

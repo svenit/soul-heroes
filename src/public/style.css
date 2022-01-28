@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap');
+@font-face {
+    font-family: Normal;
+    src: url('fonts/normal.ttf');
+}
+
+@font-face {
+    font-family: Pixel;
+    src: url('fonts/pixel.ttf');
+}
+
+@font-face {
+    font-family: PixelVi;
+    src: url('fonts/pixel-vi.otf');
+}
+
+@font-face {
+    font-family: PixelSan;
+    src: url('fonts/pixel-san.otf');
+}
+
+@font-face {
+    font-family: Biker;
+    src: url('fonts/biker.ttf');
+}
+body {
+    margin: 0px;
+    overflow: hidden;
+    user-select: none;
+}
+canvas {
+    margin: 0px;
+    width: 100%;
+}
+
+.w-full {
+    width: 100vw;
+}
+.h-full {
+    height: 100vh;
+}
+
+.dimmed-bg {
+    background: rgb(0, 0, 0, 0.3);
+    top: 5px;
+    position: relative;
+    z-index: 999;
+}
+
+/* MODAL */
+
+.basic-modal {
+    border-radius: 5px;
+    border: 3px solid #9484ba;
+    background: #494461;
+    width: 60%;
+    height: 80%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.basic-modal-close {
+    position: absolute;
+    width: 40px;
+    right: -13px;
+    top: -13px;
+}
+
+.basic-modal-title {
+    -webkit-text-stroke: 0.7px black;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.basic-modal-content {
+    font-size: 13px;
+    color: #a097b6;
+    border-radius: 5px;
+    border: 1px solid #1e1a27;
+    background: #272433;
+    height: 85%;
+    overflow: auto;
+    font-family: 'Roboto', sans-serif;
+}

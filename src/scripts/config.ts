@@ -2,12 +2,11 @@ import Phaser from 'phaser';
 import GameConfig from './config/game';
 
 const config: Phaser.Types.Core.GameConfig = {
-    type: Phaser.WEBGL,
+    type: Phaser.CANVAS,
     parent: 'game',
     render: {
         antialiasGL: false,
         pixelArt: true,
-        powerPreference: "high-performance",
     },
     roundPixels: true,
     physics: {
@@ -27,10 +26,13 @@ const config: Phaser.Types.Core.GameConfig = {
     },
     disableContextMenu: true,
     fps: {
-        target: 240,
+        target: 120,
         forceSetTimeOut: true,
     },
     banner: false,
+    dom: {
+        createContainer: true
+    }
 };
 
 console.warn = () => null;

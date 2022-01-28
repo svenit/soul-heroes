@@ -83,7 +83,7 @@ class SkyShurikenWeapon extends Weapon {
      * @param {Owner} owner
      */
     // @ts-ignore
-    public onFollowedMove(owner: Actor) {
+    public onFollowedMove(owner: Actor): Weapon {
         const weapon = super.onFollowedMove(owner);
         const { x, y, body } = owner;
         if (this._weaponAnimation) {

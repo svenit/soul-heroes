@@ -105,6 +105,7 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
     public setModel(options = {}) {
         this.model = Object.assign(this.model, options);
     }
+    public async make(owner: Actor): Promise<void> {}
     /**
      * @summary Tạo vũ khí cho actor
      * @param {Actor} owner

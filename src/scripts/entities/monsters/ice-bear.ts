@@ -102,7 +102,7 @@ class IceBear extends BaseMonster {
     public onAttackEnemy({ target }: OnAttackEnemy) {
         if (this.status.alive) {
             const randomFreezeChane = GameHelper.randomInRange(0, 100);
-            /* 30% làm đóng băng hater */
+            /* 30% làm đóng băng target */
             if (randomFreezeChane <= 30) {
                 if (this._freezeAnimation) this._freezeAnimation.destroy();
                 target.status.canMove = false;

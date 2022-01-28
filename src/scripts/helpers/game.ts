@@ -7,7 +7,7 @@ class GameHelper {
     static loaded: string[] = [];
     static attackRange: Phaser.GameObjects.Shape;
 
-    static moveByAngle(object: Actor | any, angle: number, speed = 1, increment = true) {
+    static moveByAngle(object: Actor | any, angle: number, speed = 1, increment = true, callback?: CallableFunction) {
         if (object.status.alive && object.status.canMove) {
             const x = 100 * speed * Math.cos((angle * Math.PI) / 180);
             const y = 100 * speed * Math.sin((angle * Math.PI) / 180);
@@ -19,6 +19,7 @@ class GameHelper {
                 object.body.velocity.y = y;
             }
             object._angle = angle;
+            callback && callback();
         }
     }
     static renderDebug(object: Phaser.Tilemaps.TilemapLayer, game: Scene) {

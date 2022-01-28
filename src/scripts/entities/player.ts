@@ -42,10 +42,10 @@ class Player extends Phaser.Physics.Arcade.Sprite implements Actor {
         width: 32,
         height: 32,
     };
+    public bodyContainer: Phaser.GameObjects.Container;
     public gearContainer: Phaser.GameObjects.Container;
     public gearsKeys: { [key: string]: Phaser.GameObjects.Image } = {};
     public followers: any = [];
-    public shadow: Shadow;
     public hp: Bar;
     public weapon: Weapon;
     public direction: string = '';
@@ -77,23 +77,32 @@ class Player extends Phaser.Physics.Arcade.Sprite implements Actor {
         this.body.setVelocity(0).setCollideWorldBounds(true);
         this.body.setSize(32, 46, true);
         this.body.debugBodyColor = 0x09b500;
-        if (this._options.makeShadow) {
-            this.shadow = new Shadow(this.scene, this);
-            this.followers.push(this.shadow);
-        }
         this.setImmovable();
         this.setDepth(3);
         this.initMovementSound();
+
+        this.bodyContainer = this.scene.add.container();
+        this.bodyContainer.setPosition(this.x, this.y);
+        this.scene.physics.world.enable(this.bodyContainer);
+
+        if (this._options.makeShadow) {
+            const shadow = new Shadow(this.scene, {
+                x: 0,
+                y: 20,
+                scale: 0.5,
+            });
+            this.bodyContainer.add(shadow);
+        }
     }
     /**
      * Set điểm thuộc tính cho actor
      */
     public initStats(stats: Partial<Stats> = {}) {
         this.stats = Object.assign(this.stats, stats);
-        this.hp = new Bar(this.scene, this.x, this.y, this, {
+        this.hp = new Bar(this.scene, this, {
             total: this.stats.hp,
         });
-        this.followers.push(this.hp);
+        this.bodyContainer && this.bodyContainer.add(this.hp);
     }
     /**
      * @param {gearsOptions} options
@@ -180,6 +189,13 @@ class Player extends Phaser.Physics.Arcade.Sprite implements Actor {
             this.gearContainer.direction = this.direction;
         }
     }
+    public moveBodyContainer() {
+        if (this.bodyContainer) {
+            this.bodyContainer.setPosition(this.x, this.y);
+            // @ts-ignore
+            this.bodyContainer.body.setVelocity(this.body.velocity.x, this.body.velocity.y);
+        }
+    }
     /**
      * @summary Bắt sự kiện actor di chuyển
      */
@@ -190,6 +206,7 @@ class Player extends Phaser.Physics.Arcade.Sprite implements Actor {
             this._direction = GameHelper.getDirectionFromAngle(this._angle);
             this.triggerFolowers();
             this.moveGear();
+            this.moveBodyContainer();
             this.autoAimEnemy();
             if (!this._footStepSound.isPlaying) this._footStepSound.play();
             /* Vẽ attack range */
@@ -278,7 +295,7 @@ class Player extends Phaser.Physics.Arcade.Sprite implements Actor {
      * @param {Weapon} weapon
      * @summary Sử dụng vũ khí cho actor
      */
-    public async useWeapon(weapon: any) {
+    public async useWeapon(weapon: Weapon) {
         await weapon.make(this);
         this.weapon = weapon;
         this.followers.push(weapon);
@@ -321,6 +338,8 @@ class Player extends Phaser.Physics.Arcade.Sprite implements Actor {
             this.body.setVelocity(0);
             // @ts-ignore
             this.gearContainer && this.gearContainer.body.setVelocity(0);
+            // @ts-ignore
+            this.bodyContainer && this.bodyContainer.body.setVelocity(0);
             this.followers.forEach((follower: PhysicBody) => follower.resetState && follower.resetState());
         }
     }
@@ -356,6 +375,7 @@ class Player extends Phaser.Physics.Arcade.Sprite implements Actor {
         await GameHelper.loadSprite('image', 'die', 'images/common/die.png', this.scene);
         this.angle = 0;
         this.gearContainer && this.gearContainer.destroy();
+        this.bodyContainer && this.bodyContainer.destroy();
         // @ts-ignore
         this.body.setVelocity(0, 0);
         this.stop();

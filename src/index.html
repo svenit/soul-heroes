@@ -17,44 +17,12 @@
 	<link rel="preload" as="font" href="fonts/pixel-vi.otf" crossOrigin="anonymous" type="font/otf" />
 	<link rel="preload" as="font" href="fonts/pixel-san.otf" crossOrigin="anonymous" type="font/otf" />
 	<link rel="preload" as="font" href="fonts/biker.ttf" crossOrigin="anonymous" type="font/ttf" />
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	<link rel="stylesheet" href="style.css">
 	<title>
 		<%= htmlWebpackPlugin.options.gameName %>
 	</title>
-	<style>
-		@font-face {
-			font-family: Normal;
-			src: url('fonts/normal.ttf');
-		}
-
-		@font-face {
-			font-family: Pixel;
-			src: url('fonts/pixel.ttf');
-		}
-
-		@font-face {
-			font-family: PixelVi;
-			src: url('fonts/pixel-vi.otf');
-		}
-
-		@font-face {
-			font-family: PixelSan;
-			src: url('fonts/pixel-san.otf');
-		}
-
-		@font-face {
-			font-family: Biker;
-			src: url('fonts/biker.ttf');
-		}
-		body {
-			margin: 0px;
-			overflow: hidden;
-			user-select: none;
-		}
-		canvas {
-			margin: 0px;
-			width: 100%;
-		}
-	</style>
 	<noscript>Please enable javascript to continue using this application.</noscript>
 	<script>
 		if ('serviceWorker' in navigator) {

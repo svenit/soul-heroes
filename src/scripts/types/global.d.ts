@@ -1,5 +1,9 @@
 import { Actor } from './actor';
 
+declare module "raw-loader!*" {
+    const content: string;
+    export default content;
+}
 export interface Scene extends Phaser.Scene {
     bulletColliders?: any;
 }

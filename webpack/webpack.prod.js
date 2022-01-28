@@ -25,21 +25,21 @@ const prod = {
         },
     },
     plugins: [
-        new WebpackObfuscator(
-            {
-                compact: true,
-                deadCodeInjection: true,
-                debugProtection: true,
-                disableConsoleOutput: true,
-                sourceMap: false,
-            },
-            ['vendors.*.js', 'sw.js'],
-        ),
-        new InjectManifest({
-            swSrc: path.resolve(__dirname, '../pwa/sw.js'),
-            swDest: 'sw.js',
-            maximumFileSizeToCacheInBytes: maxBuiltFileSize,
-        }),
+        // new WebpackObfuscator(
+        //     {
+        //         compact: true,
+        //         deadCodeInjection: true,
+        //         debugProtection: true,
+        //         disableConsoleOutput: true,
+        //         sourceMap: false,
+        //     },
+        //     ['vendors.*.js', 'sw.js'],
+        // ),
+        // new InjectManifest({
+        //     swSrc: path.resolve(__dirname, '../pwa/sw.js'),
+        //     swDest: 'sw.js',
+        //     maximumFileSizeToCacheInBytes: maxBuiltFileSize,
+        // }),
     ],
     performance: {
         maxEntrypointSize: maxBuiltFileSize,

@@ -32,22 +32,23 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite implements Actor {
     public status: MonsterStatuses = {
         alive: true,
         canAttack: true,
-        canMove: true,
+        canMove: false,
         isCanSeeHater: false,
     };
     public drop = {
         xp: [0, 0],
     };
+    public bodyContainer: Phaser.GameObjects.Container;
     public hp: Bar;
     public followers: Phaser.GameObjects.GameObject[] = [];
     public haters: Phaser.GameObjects.GameObject[] = [];
-    public haterTypes: string[] = [Groups.Player];
+    public haterTypes: string[] = [];
     public closestHater: Actor | null = null;
     public moveAngle: number = 0;
 
     /* Private */
     private _gfx: Phaser.GameObjects.Graphics;
-    private _getHatersTimer: Phaser.Time.TimerEvent;
+    private _loopTimer: Phaser.Time.TimerEvent;
     private _moveToHaterTimer: Phaser.Time.TimerEvent;
     private _moveByAITimer: Phaser.Time.TimerEvent;
 
@@ -61,23 +62,30 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite implements Actor {
         this.setImmovable();
     }
     public makeMonster() {
-        this.hp = new Bar(this.scene, this.x, this.y, this, {
+        this.bodyContainer = this.scene.add.container();
+        this.bodyContainer.setPosition(this.x, this.y).setDepth(3).setSize(0.1, 0.1);
+        this.scene.physics.world.enable(this.bodyContainer);
+
+        this.hp = new Bar(this.scene, this, {
             total: this.stats.hp,
         });
-        this.followers.push(this.hp);
+        this.bodyContainer.add(this.hp);
         /* Lấy ra haters */
-        this._getHatersTimer = this.scene.time.addEvent({
+        this._loopTimer = this.scene.time.addEvent({
             delay: 100,
             callback: () => {
                 const { alive, canMove } = this.status;
-                if (!alive && this._getHatersTimer) {
-                    return this._getHatersTimer.remove();
+                if (!alive && this._loopTimer) {
+                    return this._loopTimer.remove();
                 }
                 if (!canMove) {
                     // @ts-ignore
                     this.body.setVelocity(0);
                     this.triggerFollowersMove();
                 }
+                this.bodyContainer.setPosition(this.x, this.y);
+                // @ts-ignore
+                this.bodyContainer.body.setVelocity(this.body.velocity.x, this.body.velocity.y);
                 this.haters = this.scene.children.list.filter((child: Phaser.GameObjects.GameObject) =>
                     this.haterTypes.includes(child.name),
                 );
@@ -213,6 +221,7 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite implements Actor {
     }
     public onDie() {
         this.followers.forEach((follower: any) => follower.destroy());
+        this.bodyContainer.destroy();
         this.destroy();
     }
 }
