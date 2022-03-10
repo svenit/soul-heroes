@@ -1,6 +1,4 @@
-*SOUL HEROES*
-
-Dungeon Adventure
+**SOUL HEROES - Dungeon Adventure (Deprecated)**
 
 ![GameDemo!](https://i.imgur.com/5rrL93B.png "Game Demo")
 
