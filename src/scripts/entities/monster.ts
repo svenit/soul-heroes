@@ -32,7 +32,7 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite implements Actor {
     public status: MonsterStatuses = {
         alive: true,
         canAttack: true,
-        canMove: false,
+        canMove: true,
         isCanSeeHater: false,
     };
     public drop = {
@@ -42,7 +42,7 @@ class BaseMonster extends Phaser.Physics.Arcade.Sprite implements Actor {
     public hp: Bar;
     public followers: Phaser.GameObjects.GameObject[] = [];
     public haters: Phaser.GameObjects.GameObject[] = [];
-    public haterTypes: string[] = [];
+    public haterTypes: string[] = [Groups.Player];
     public closestHater: Actor | null = null;
     public moveAngle: number = 0;
 
